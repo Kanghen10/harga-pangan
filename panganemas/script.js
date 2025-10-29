@@ -1,29 +1,26 @@
 // ---------- Utility ----------
 function stripHtml(s){ return s ? s.replace(/<\/?[^>]+(>|$)/g,'').trim() : s; }
 
-// Format angka dengan 2 desimal (menganggap input menggunakan titik sebagai desimal jika ada)
-// e.g. "2139.82" -> "Rp. 2.139,82"
+// Format "2139.82" -> "Rp. 2.139,82"
 function formatToRpFromDotDecimal(strVal){
   if (strVal === null || strVal === undefined) return '-';
   const clean = String(strVal).trim();
   if (clean === '') return '-';
+  // parseFloat menganggap '.' sebagai desimal
   const num = parseFloat(clean.replace(/[^0-9\.\-]/g,''));
   if (isNaN(num)) return '-';
   return 'Rp. ' + num.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// Format angka ke rupiah tanpa desimal dan dengan pemisah ribuan titik
-// e.g. "2140" or 2140 -> "Rp 2.140"
+// Format "2140" -> "Rp 2.140" (no decimals, rounded)
 function formatToRpNoDecimals(value){
   if (value === null || value === undefined || value === '') return '-';
-  // ambil angka saja, bulatkan ke integer terdekat
   const n = Math.round(parseFloat(String(value).replace(/[^0-9\.\-]/g,'')));
   if (isNaN(n)) return '-';
-  // format dengan '.' sebagai pemisah ribuan (menggunakan toLocaleString id-ID tanpa desimal)
   return 'Rp ' + n.toLocaleString('id-ID', { maximumFractionDigits: 0 });
 }
 
-// Ambil nilai terakhir dari <dataset> terakhir, cari set terakhir yang tidak kosong
+// Ambil nilai terakhir dari dataset terakhir (set terakhir non-empty)
 function extractLastSetValueFromXmlText(xmlText){
   try {
     const parser = new DOMParser();
@@ -39,12 +36,12 @@ function extractLastSetValueFromXmlText(xmlText){
     }
     return null;
   } catch (e) {
-    console.error('XML parse error', e);
+    console.error('XML parse error (sets)', e);
     return null;
   }
 }
 
-// Ambil YAxisMaxValue dari tag <chart ... YAxisMaxValue="...">
+// Ambil YAxisMaxValue dari <chart ... YAxisMaxValue="...">
 function extractYAxisMaxFromXmlText(xmlText){
   try {
     const m = xmlText.match(/YAxisMaxValue="([^"]+)"/i);
@@ -56,31 +53,46 @@ function extractYAxisMaxFromXmlText(xmlText){
   }
 }
 
-// ---------- Bagian yang TIDAK diubah: fetch harga emas & kurs USD (sesuai permintaan) ----------
+// ---------- Harga Emas & Kurs USD (KEEP AS-IS / robust) ----------
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
     const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const payload = data.data ? data.data : (Array.isArray(data) ? data[0] : data);
 
-    const hargaE = payload && payload.se_gr_kurs ? stripHtml(payload.se_gr_kurs) : null;
-    const kursUSDraw = payload && payload.kurs_global ? stripHtml(payload.kurs_global) : null;
-    const update = payload && payload.se_update ? stripHtml(payload.se_update).replace('*US Dollar','').trim() : '';
+    // robust access: beberapa respons pakai data.data, beberapa pakai object/array
+    const payload = data?.data ? data.data : (Array.isArray(data) ? data[0] : data);
 
-    document.getElementById('harga-emas').textContent = hargaE ? ('Rp. ' + hargaE) : '-';
-    document.getElementById('kurs-usd').textContent = kursUSDraw ? ('Rp. ' + kursUSDraw) : '-';
-    document.getElementById('update-info').textContent = update ? ('📅 Update terakhir: ' + update) : 'Memuat data...';
-    document.getElementById('harga-emas-update')?.textContent = update ? ('Update: ' + update) : '';
+    const clean = (html) => stripHtml(html);
+    const hargaEmasRaw = payload && payload.se_gr_kurs ? clean(payload.se_gr_kurs) : null;
+    const kursUsdRaw = payload && payload.kurs_global ? clean(payload.kurs_global) : null;
+    const updateRaw = payload && payload.se_update ? clean(payload.se_update).replace('*US Dollar','').trim() : '';
+
+    // tampilkan sesuai format yang sudah benar: prefix "Rp. " + string dari sumber
+    const elHarga = document.getElementById('harga-emas');
+    const elKursUsd = document.getElementById('kurs-usd');
+    const elUpdateInfo = document.getElementById('update-info');
+    const elHargaUpdate = document.getElementById('harga-emas-update');
+    const elUsdUpdate = document.getElementById('kurs-usd-update');
+
+    if (elHarga) elHarga.textContent = hargaEmasRaw ? ('Rp. ' + hargaEmasRaw) : '-';
+    if (elKursUsd) elKursUsd.textContent = kursUsdRaw ? ('Rp. ' + kursUsdRaw) : '-';
+    if (elUpdateInfo) elUpdateInfo.textContent = updateRaw ? ('📅 Update terakhir: ' + updateRaw) : 'Memuat data...';
+    if (elHargaUpdate) elHargaUpdate.textContent = updateRaw ? ('Update: ' + updateRaw) : '';
+    if (elUsdUpdate) elUsdUpdate.textContent = '';
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
-    document.getElementById('update-info').textContent = 'Gagal memuat data.';
-    document.getElementById('harga-emas').textContent = 'Gagal memuat';
-    document.getElementById('kurs-usd').textContent = 'Gagal memuat';
+    const elUpdateInfo = document.getElementById('update-info');
+    if (elUpdateInfo) elUpdateInfo.textContent = 'Gagal memuat data.';
+    const elHarga = document.getElementById('harga-emas');
+    const elKursUsd = document.getElementById('kurs-usd');
+    if (elHarga) elHarga.textContent = 'Gagal memuat';
+    if (elKursUsd) elKursUsd.textContent = 'Gagal memuat';
   }
 }
 
-// ---------- Kurs mata uang lain (menggunakan endpoint data.php sesuai instruksi) ----------
+// ---------- Kurs mata uang lain (dari data.php dengan fallback YAxisMaxValue) ----------
 const kursList = [
   { code:'HKD', label:'Dollar Hongkong (HKD)', url:'https://kursdollar.org/data.php?v_range=0&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
   { code:'SGD', label:'Dollar Singapura (SGD)', url:'https://kursdollar.org/data.php?v_range=0&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
@@ -105,16 +117,18 @@ const kursList = [
 
 async function loadKursLain() {
   const tbody = document.querySelector('#kurs-lain tbody');
+  if (!tbody) return;
   tbody.innerHTML = ''; // kosongkan
+
   for (const item of kursList) {
     try {
       const res = await fetch(item.url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const txt = await res.text();
 
-      // 1) coba ambil nilai dari <set> (dataset terakhir)
+      // 1) coba ambil dari <set> terakhir non-empty
       let setVal = extractLastSetValueFromXmlText(txt); // contoh "2139.82"
       if (setVal) {
-        // tampilkan dengan 2 desimal seperti sebelumnya
         const display = formatToRpFromDotDecimal(setVal);
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${item.label}</td><td>${display}</td>`;
@@ -122,17 +136,17 @@ async function loadKursLain() {
         continue;
       }
 
-      // 2) fallback: ambil YAxisMaxValue dari <chart ... YAxisMaxValue="...">
+      // 2) fallback ke YAxisMaxValue
       const yMax = extractYAxisMaxFromXmlText(txt); // contoh "2140"
       if (yMax) {
-        const display = formatToRpNoDecimals(yMax); // tampilkan tanpa desimal, bulat
+        const display = formatToRpNoDecimals(yMax);
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${item.label}</td><td>${display}</td>`;
         tbody.appendChild(tr);
         continue;
       }
 
-      // 3) jika keduanya gagal, tampilkan '-'
+      // 3) keduanya gagal -> tampilkan '-'
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${item.label}</td><td>-</td>`;
       tbody.appendChild(tr);
@@ -146,11 +160,20 @@ async function loadKursLain() {
   }
 }
 
-// Jalankan semua
+// ---------- Inisiasi (protected) ----------
 (async function init(){
-  await fetchEmasUsd();   // harga emas + kurs USD (tetap)
-  await loadKursLain();   // kurs lainnya (Bank Indonesia)
-  // update main info waktu load
+  try {
+    await fetchEmasUsd();   // Harga Emas + Kurs USD (tetap)
+  } catch(e){
+    console.error('fetchEmasUsd unexpected error', e);
+  }
+
+  try {
+    await loadKursLain();   // Kurs lainnya
+  } catch(e){
+    console.error('loadKursLain unexpected error', e);
+  }
+
   const ui = document.getElementById('update-info');
   if (ui) ui.textContent = 'Terakhir dimuat: ' + (new Date()).toLocaleString('id-ID');
 })();
