@@ -1,47 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Harga Emas & Kurs Mata Uang</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Harga Emas & Kurs Dunia</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>📊 Dashboard Harga Emas & Kurs Mata Uang</h1>
+    <h1>📊 Harga Emas & Kurs Dunia</h1>
+    <p id="update-info">Memuat data...</p>
   </header>
 
-  <main>
-    <section class="cards">
-      <div class="card gold">
-        <h2>Harga Emas</h2>
-        <p class="value" id="harga-emas">Loading...</p>
-      </div>
+  <section class="cards">
+    <div class="card card-gold">
+      <h2>Harga Emas per Gram</h2>
+      <p class="value" id="harga-emas">-</p>
+    </div>
 
-      <div class="card usd">
-        <h2>Kurs Dolar AS</h2>
-        <p class="value" id="kurs-usd">Loading...</p>
-      </div>
-    </section>
+    <div class="card card-usd">
+      <h2>Kurs USD → Rupiah</h2>
+      <p class="value" id="kurs-usd">-</p>
+    </div>
+  </section>
 
-    <section class="kurs-section">
-      <h2>Kurs Mata Uang Lain (ke Rupiah)</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Mata Uang</th>
-            <th>Kurs (Rp)</th>
-          </tr>
-        </thead>
-        <tbody id="kurs-table-body">
-          <!-- Akan diisi otomatis oleh script.js -->
-        </tbody>
-      </table>
-    </section>
-  </main>
+  <section class="table-section">
+    <h2>🌍 Kurs Mata Uang Lain (ke Rupiah)</h2>
+    <table id="kurs-lain">
+      <thead>
+        <tr><th>Mata Uang</th><th>Kurs (Rp)</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
 
-  <footer>  
-    <p><strong>Sumber:</strong> kursdollar.org dan harga-emas.net</p>
+  <footer>
+    <p>Data sumber: <a href="https://harga-emas.net" target="_blank">harga-emas.net</a> & 
+    <a href="https://kursdollar.org" target="_blank">kursdollar.org</a></p>
   </footer>
 
   <script src="script.js"></script>
