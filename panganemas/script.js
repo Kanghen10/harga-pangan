@@ -1,19 +1,26 @@
 // ---------- Utility ----------
-// Hapus tag HTML, aman untuk string yang mengandung <font> atau <span>
 function stripHtml(s){ return s ? s.replace(/<\/?[^>]+(>|$)/g,'').trim() : s; }
 
-// Format number string (dengan titik sebagai pemisah ribuan & koma desimal) ke format Indonesia:
-// input bisa "2139.82" atau "2139.82" atau "2139" -> keluaran "Rp. 2.139,82" (2 desimal jika ada)
+// Format angka dengan 2 desimal (menganggap input menggunakan titik sebagai desimal jika ada)
+// e.g. "2139.82" -> "Rp. 2.139,82"
 function formatToRpFromDotDecimal(strVal){
   if (strVal === null || strVal === undefined) return '-';
-  // Bersihkan spasi
   const clean = String(strVal).trim();
   if (clean === '') return '-';
-  // Parse sebagai number (menganggap '.' sebagai desimal)
   const num = parseFloat(clean.replace(/[^0-9\.\-]/g,''));
   if (isNaN(num)) return '-';
-  // Gunakan toLocaleString id-ID dengan 2 desimal
   return 'Rp. ' + num.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Format angka ke rupiah tanpa desimal dan dengan pemisah ribuan titik
+// e.g. "2140" or 2140 -> "Rp 2.140"
+function formatToRpNoDecimals(value){
+  if (value === null || value === undefined || value === '') return '-';
+  // ambil angka saja, bulatkan ke integer terdekat
+  const n = Math.round(parseFloat(String(value).replace(/[^0-9\.\-]/g,'')));
+  if (isNaN(n)) return '-';
+  // format dengan '.' sebagai pemisah ribuan (menggunakan toLocaleString id-ID tanpa desimal)
+  return 'Rp ' + n.toLocaleString('id-ID', { maximumFractionDigits: 0 });
 }
 
 // Ambil nilai terakhir dari <dataset> terakhir, cari set terakhir yang tidak kosong
@@ -37,28 +44,34 @@ function extractLastSetValueFromXmlText(xmlText){
   }
 }
 
-// ---------- Bagian yang sudah dinyatakan "tidak perlu direvisi" ----------
-// Kita biarkan fetchEmasUsd & parsingnya seperti sebelumnya (kamu bilang sudah benar)
+// Ambil YAxisMaxValue dari tag <chart ... YAxisMaxValue="...">
+function extractYAxisMaxFromXmlText(xmlText){
+  try {
+    const m = xmlText.match(/YAxisMaxValue="([^"]+)"/i);
+    if (m && m[1]) return m[1].trim();
+    return null;
+  } catch (e) {
+    console.error('Failed extract YAxisMaxValue', e);
+    return null;
+  }
+}
+
+// ---------- Bagian yang TIDAK diubah: fetch harga emas & kurs USD (sesuai permintaan) ----------
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
     const res = await fetch(url);
     const data = await res.json();
-    const clean = (html) => stripHtml(html);
-
-    // beberapa respons API menggunakan object atau array; robust handling:
     const payload = data.data ? data.data : (Array.isArray(data) ? data[0] : data);
 
     const hargaE = payload && payload.se_gr_kurs ? stripHtml(payload.se_gr_kurs) : null;
     const kursUSDraw = payload && payload.kurs_global ? stripHtml(payload.kurs_global) : null;
     const update = payload && payload.se_update ? stripHtml(payload.se_update).replace('*US Dollar','').trim() : '';
 
-    // tampilkan persis sesuai sumber (kamu minta untuk harga emas dan USD tetap seperti sebelumnya)
     document.getElementById('harga-emas').textContent = hargaE ? ('Rp. ' + hargaE) : '-';
     document.getElementById('kurs-usd').textContent = kursUSDraw ? ('Rp. ' + kursUSDraw) : '-';
     document.getElementById('update-info').textContent = update ? ('📅 Update terakhir: ' + update) : 'Memuat data...';
-    document.getElementById('harga-emas-update').textContent = update ? ('Update: ' + update) : '';
-    document.getElementById('kurs-usd-update').textContent = '';
+    document.getElementById('harga-emas-update')?.textContent = update ? ('Update: ' + update) : '';
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
     document.getElementById('update-info').textContent = 'Gagal memuat data.';
@@ -67,7 +80,7 @@ async function fetchEmasUsd() {
   }
 }
 
-// ---------- Kurs mata uang lain (gunakan endpoint data.php sesuai permintaan) ----------
+// ---------- Kurs mata uang lain (menggunakan endpoint data.php sesuai instruksi) ----------
 const kursList = [
   { code:'HKD', label:'Dollar Hongkong (HKD)', url:'https://kursdollar.org/data.php?v_range=0&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
   { code:'SGD', label:'Dollar Singapura (SGD)', url:'https://kursdollar.org/data.php?v_range=0&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
@@ -97,12 +110,33 @@ async function loadKursLain() {
     try {
       const res = await fetch(item.url);
       const txt = await res.text();
-      // Ambil value dari dataset terakhir -> set terakhir non-empty
-      const val = extractLastSetValueFromXmlText(txt); // contoh "2139.82"
-      const display = val ? formatToRpFromDotDecimal(val) : '-';
+
+      // 1) coba ambil nilai dari <set> (dataset terakhir)
+      let setVal = extractLastSetValueFromXmlText(txt); // contoh "2139.82"
+      if (setVal) {
+        // tampilkan dengan 2 desimal seperti sebelumnya
+        const display = formatToRpFromDotDecimal(setVal);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.label}</td><td>${display}</td>`;
+        tbody.appendChild(tr);
+        continue;
+      }
+
+      // 2) fallback: ambil YAxisMaxValue dari <chart ... YAxisMaxValue="...">
+      const yMax = extractYAxisMaxFromXmlText(txt); // contoh "2140"
+      if (yMax) {
+        const display = formatToRpNoDecimals(yMax); // tampilkan tanpa desimal, bulat
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.label}</td><td>${display}</td>`;
+        tbody.appendChild(tr);
+        continue;
+      }
+
+      // 3) jika keduanya gagal, tampilkan '-'
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${item.label}</td><td>${display}</td>`;
+      tr.innerHTML = `<td>${item.label}</td><td>-</td>`;
       tbody.appendChild(tr);
+
     } catch (e) {
       console.error('Gagal ambil kurs', item.code, e);
       const tr = document.createElement('tr');
