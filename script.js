@@ -1,57 +1,49 @@
-// ✅ script.js — versi final dengan pagination 9 item per halaman
+// ✅ script.js — final fix compatible with your index.html
 
 const apiURL = "https://data.jabarprov.go.id/api-dashboard-jabar/public/pangan/list-komoditas?search=&page=1&limit=62&order=asc&order_by=name";
 
-// cari elemen utama
-const container = document.getElementById("commodity-container") || document.getElementById("data-container");
-const lastUpdateEl = document.getElementById("last-update") || null;
+const container = document.getElementById("data-container");
+const lastUpdateEl = document.getElementById("last-update");
 
-// pagination
+let allData = [];
 let currentPage = 1;
 const perPage = 9;
-let allData = [];
 
-/** utils */
-function formatNumber(n) {
-  const num = Number(n) || 0;
-  return num.toLocaleString("id-ID");
-}
-function esc(s) {
-  if (s === null || s === undefined) return "";
-  return String(s).replace(/[&<>"']/g, m => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[m]);
+// format angka ke format Indonesia
+function formatNumber(num) {
+  const n = Number(num) || 0;
+  return n.toLocaleString("id-ID");
 }
 
-/** buat html indikator naik/turun/stabil */
+// buat label kondisi harga (naik/turun)
 function buildIndicatorHTML(kondisi_raw, diff_raw, diffPercent_raw) {
-  const kondisi = String(kondisi_raw || "").toLowerCase();
+  const kondisi = (kondisi_raw || "").toLowerCase();
   const diff = Number(diff_raw) || 0;
   const diffPercent = (diffPercent_raw === null || diffPercent_raw === undefined) ? null : Number(diffPercent_raw);
-  let icon = "", cls = "", color = "";
+  let icon = "", color = "";
 
   if (kondisi === "naik") {
-    icon = "▲"; color = "#028a0f"; cls = "up";
+    icon = "▲"; color = "#059669"; // hijau
   } else if (kondisi === "turun") {
-    icon = "▼"; color = "#d32f2f"; cls = "down";
+    icon = "▼"; color = "#e11d48"; // merah
   } else {
-    icon = "⭮"; color = "#777"; cls = "same";
+    icon = "⭮"; color = "#9ca3af"; // abu
   }
 
-  const pctText = (diffPercent === null || isNaN(diffPercent)) ? "-" : `${(diffPercent > 0 ? "+" : "")}${Number(diffPercent).toFixed(2)}%`;
+  const pctText = diffPercent !== null && !isNaN(diffPercent)
+    ? `${diffPercent > 0 ? "+" : ""}${diffPercent.toFixed(2)}%`
+    : "-";
   const diffText = `${diff > 0 ? "+" : ""}${formatNumber(diff)}`;
 
   return `
-    <div class="kondisi-harga ${cls}">
-      <span style="color:${color};font-weight:600;">${icon} ${esc(kondisi.toUpperCase())}</span><br>
-      <small style="color:${color};opacity:0.8;">${esc(pctText)} (${esc(diffText)})</small>
+    <div class="indicator" style="color:${color}">
+      ${icon} ${kondisi.toUpperCase()} (${pctText}, ${diffText})
     </div>
   `;
 }
 
-/** render 9 item sesuai halaman */
+// render halaman
 function renderPage(page) {
-  if (!container) return;
   container.innerHTML = "";
 
   const start = (page - 1) * perPage;
@@ -59,23 +51,21 @@ function renderPage(page) {
   const items = allData.slice(start, end);
 
   items.forEach(item => {
-    const imageUrl = item.url || "https://via.placeholder.com/80";
-    const name = item.name || "-";
-    const price = Number(item.price || 0);
-    const unit = item.unit || "";
-    const kondisi = item.kondisi_harga || "";
-    const diff = item.diff ?? 0;
-    const diffPercent = item.diff_percent ?? null;
-
     const card = document.createElement("div");
-    card.className = "commodity-card";
-
+    card.className = "card";
     card.innerHTML = `
-      <img src="${esc(imageUrl)}" alt="${esc(name)}" onerror="this.src='https://via.placeholder.com/80';">
-      <div class="commodity-info">
-        <h3>${esc(name)}</h3>
-        <p class="commodity-price">Rp ${formatNumber(price)}</p>
-        ${buildIndicatorHTML(kondisi, diff, diffPercent)}
+      <div class="imgwrap">
+        <img src="${item.url || "https://via.placeholder.com/300x150?text=No+Image"}" 
+             alt="${item.name || "-"}" 
+             onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'">
+      </div>
+      <div class="card-body">
+        <h2 class="title">${item.name || "-"}</h2>
+        <div class="price-row">
+          <div class="price">Rp ${formatNumber(item.price)}</div>
+          <div class="unit">/ ${item.unit || ""}</div>
+        </div>
+        ${buildIndicatorHTML(item.kondisi_harga, item.diff, item.diff_percent)}
       </div>
     `;
     container.appendChild(card);
@@ -84,15 +74,15 @@ function renderPage(page) {
   renderPaginationControls();
 }
 
-/** render tombol berikutnya & sebelumnya */
+// tombol pagination
 function renderPaginationControls() {
   let controls = document.getElementById("pagination-controls");
   if (!controls) {
     controls = document.createElement("div");
     controls.id = "pagination-controls";
     controls.style.textAlign = "center";
-    controls.style.margin = "14px 0 30px";
-    document.body.appendChild(controls);
+    controls.style.margin = "20px 0";
+    container.parentElement.appendChild(controls);
   }
 
   const totalPages = Math.ceil(allData.length / perPage);
@@ -110,38 +100,34 @@ function renderPaginationControls() {
 
   const info = document.createElement("span");
   info.textContent = ` Halaman ${currentPage} dari ${totalPages} `;
-  info.style.margin = "0 8px";
-  info.style.fontSize = "0.9rem";
+  info.style.margin = "0 10px";
+  info.style.fontSize = "14px";
+  info.style.color = "#555";
 
   controls.appendChild(prevBtn);
   controls.appendChild(info);
   controls.appendChild(nextBtn);
 }
 
-/** ambil data dari API */
+// ambil data
 async function loadData() {
-  if (!container) return;
   try {
-    container.innerHTML = "<p style='text-align:center;color:#555;'>Memuat data...</p>";
-    const resp = await fetch(apiURL);
-    const json = await resp.json();
-    if (!json || !Array.isArray(json.data)) throw new Error("Format data tidak sesuai");
+    container.innerHTML = "<p style='text-align:center;color:#666;'>Memuat data...</p>";
+    const response = await fetch(apiURL);
+    const json = await response.json();
+
+    if (!json || !Array.isArray(json.data)) throw new Error("Data tidak sesuai");
 
     allData = json.data;
     currentPage = 1;
     renderPage(currentPage);
 
-    // update waktu terakhir
-    if (lastUpdateEl) {
-      if (json.metadata?.last_update) {
-        lastUpdateEl.textContent = `Terakhir: ${json.metadata.last_update}`;
-      } else {
-        lastUpdateEl.textContent = "Terakhir diperbarui";
-      }
+    if (lastUpdateEl && json.metadata?.last_update) {
+      lastUpdateEl.textContent = "Terakhir diperbarui: " + json.metadata.last_update;
     }
   } catch (err) {
-    console.error("Gagal memuat data:", err);
-    container.innerHTML = `<div style="color:#b91c1c;text-align:center;padding:16px;">Gagal memuat data: ${esc(err.message)}</div>`;
+    console.error("Gagal memuat:", err);
+    container.innerHTML = `<p style="color:red;text-align:center;">Gagal memuat data: ${err.message}</p>`;
   }
 }
 
