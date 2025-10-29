@@ -1,95 +1,94 @@
-// Fungsi bantu untuk format angka ke “Rp …” dengan pemisah ribuan dan dua desimal
-function formatRp(value) {
-  // asumsi value adalah string atau number seperti “2135673” atau “2.135.673”
-  let num = typeof value === 'string' ? value.replace(/[^0-9,\.]/g, '') : value;
-  num = parseFloat(num.toString().replace(/,/g, '.'));
+// ===== Utility untuk format angka Indonesia (Rp 2.144.196,00)
+function formatRupiah(value) {
+  if (!value) return '-';
+  // Hapus semua karakter non-angka dan koma/titik
+  let numStr = value.toString().replace(/[^0-9,\.]/g, '');
+  // Jika punya koma (sebagai desimal), ubah titik jadi kosong
+  numStr = numStr.replace(/\./g, '').replace(',', '.');
+  const num = parseFloat(numStr);
   if (isNaN(num)) return '-';
-  return 'Rp ' + num.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  return 'Rp ' + num.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// ===== Ambil harga emas & kurs USD
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
-    const resp = await fetch(url);
-    const data = await resp.json();
-    // Ambil harga emas per gram
-    const rawEmas = data.se_gr_kurs; // contoh: "2.135.673<\/font><\/b>( +25.378<\/font> )<\/span>"
-    // ambil kurs USD
-    const rawUsd = data.kurs_global; // contoh: "16.623,50<\/font><\/b>( +40,16<\/font> )<\/span>"
-    // tanggal update
-    const rawDate = data.se_update; // contoh: "*US Dollar<\/span>29 Okt, 14:18:35<\/span>"
-    // Bersihkan html tags & teks
-    const cleanEmas = rawEmas.replace(/<\/?[^>]+(>|$)/g, '');
-    const cleanUsd = rawUsd.replace(/<\/?[^>]+(>|$)/g, '');
-    const cleanDate = rawDate.replace(/<\/?[^>]+(>|$)/g, '').replace('*US Dollar','').trim();
+    const res = await fetch(url);
+    const data = await res.json();
 
-    document.getElementById('harga-emas').textContent = formatRp(cleanEmas);
-    document.getElementById('kurs-usd').textContent = formatRp(cleanUsd);
-    document.getElementById('update-info').textContent = 'Update terakhir: ' + cleanDate;
-  } catch (err) {
-    console.error('Error fetch emas/usd:', err);
-    document.getElementById('update-info').textContent = 'Gagal memuat data emas/usd';
+    const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
+    const hargaEmas = clean(data.se_gr_kurs);
+    const kursUsd = clean(data.kurs_global);
+    const update = clean(data.se_update).replace('*US Dollar', '').trim();
+
+    document.getElementById('harga-emas').textContent = formatRupiah(hargaEmas);
+    document.getElementById('kurs-usd').textContent = formatRupiah(kursUsd);
+    document.getElementById('update-info').textContent = '📅 Update terakhir: ' + update;
+  } catch (e) {
+    console.error('Gagal ambil data emas/usd:', e);
+    document.getElementById('update-info').textContent = 'Gagal memuat data.';
   }
 }
 
-async function fetchKursLain(kode, label) {
-  const url = `https://kursdollar.org/data-real-time.php?v_type=details&v_date=1761721200&v_c=${kode}&v_d=${kode}`;
+// ===== Ambil kurs negara lain (via XML dari kursdollar.org)
+async function fetchKurs(code, v_c, label) {
+  const url = `https://kursdollar.org/data-real-time.php?v_type=details&v_date=1761721200&v_c=${v_c}&v_d=${code}`;
   try {
-    const resp = await fetch(url);
-    const xmlText = await resp.text();
+    const res = await fetch(url);
+    const xml = await res.text();
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-    // ambil semua <set> paling akhir dalam <dataset> (nilai terakhir hari ini)
-    const sets = xmlDoc.getElementsByTagName('set');
-    const lastValue = sets.length > 0
-      ? sets[sets.length-1].getAttribute('value')
-      : null;
+    const doc = parser.parseFromString(xml, 'text/xml');
+    const sets = doc.getElementsByTagName('set');
+    if (sets.length === 0) return { label, value: null };
+    const lastValue = sets[sets.length - 1].getAttribute('value');
     return { label, value: lastValue };
-  } catch (err) {
-    console.error(`Error fetch kurs ${label}:`, err);
+  } catch (e) {
+    console.error('Gagal ambil kurs', code, e);
     return { label, value: null };
   }
 }
 
 async function loadKursLain() {
   const list = [
-    { code: 'HKD', label: 'Dollar Hongkong (HKD)', c: 3 },
-    { code: 'SGD', label: 'Dollar Singapura (SGD)', c: 2 },
-    { code: 'AUD', label: 'Dollar Australia (AUD)', c: 6 },
-    { code: 'EUR', label: 'Euro (EUR)', c: 11 },
-    { code: 'CNY', label: 'Yuan China (CNY)', c: 14 },
-    { code: 'GBP', label: 'Pound Sterling (GBP)', c: 5 },
-    { code: 'JPY', label: 'YEN Jepang (JPY)', c: 7 },
-    { code: 'CAD', label: 'Dollar Canada (CAD)', c: 10 },
-    { code: 'NZD', label: 'Dollar New Zealand (NZD)', c: 13 },
-    { code: 'MYR', label: 'Ringgit Malaysia (MYR)', c: 19 },
-    { code: 'THB', label: 'BAHT Thailand (THB)', c: 21 },
-    { code: 'SAR', label: 'Riyal Saudi Arabia (SAR)', c: 12 },
-    { code: 'PHP', label: 'Peso Filipina (PHP)', c: 16 },
-    { code: 'KRW', label: 'Won Korea Selatan (KRW)', c: 17 },
-    { code: 'VND', label: 'Dong Vietnam (VND)', c: 153 },
-    { code: 'PGK', label: 'Kina Papua New Guinea (PGK)', c: 20 },
-    { code: 'LAK', label: 'Kip Laos (LAK)', c: 91 },
-    { code: 'KWD', label: 'Dinar Kuwait (KWD)', c: 18 },
-    { code: 'BND', label: 'Dollar Brunei Darussalam (BND)', c: 38 },
+    { code: 'HKD', v_c: 3, label: 'Dollar Hongkong (HKD)' },
+    { code: 'SGD', v_c: 2, label: 'Dollar Singapura (SGD)' },
+    { code: 'AUD', v_c: 6, label: 'Dollar Australia (AUD)' },
+    { code: 'EUR', v_c: 11, label: 'Euro (EUR)' },
+    { code: 'CNY', v_c: 14, label: 'Yuan China (CNY)' },
+    { code: 'GBP', v_c: 5, label: 'Pound Sterling (GBP)' },
+    { code: 'JPY', v_c: 7, label: 'YEN Jepang (JPY)' },
+    { code: 'CAD', v_c: 10, label: 'Dollar Kanada (CAD)' },
+    { code: 'NZD', v_c: 13, label: 'Dollar New Zealand (NZD)' },
+    { code: 'MYR', v_c: 19, label: 'Ringgit Malaysia (MYR)' },
+    { code: 'THB', v_c: 21, label: 'Baht Thailand (THB)' },
+    { code: 'SAR', v_c: 12, label: 'Riyal Saudi Arabia (SAR)' },
+    { code: 'PHP', v_c: 16, label: 'Peso Filipina (PHP)' },
+    { code: 'KRW', v_c: 17, label: 'Won Korea Selatan (KRW)' },
+    { code: 'VND', v_c: 153, label: 'Dong Vietnam (VND)' },
+    { code: 'PGK', v_c: 20, label: 'Kina Papua New Guinea (PGK)' },
+    { code: 'LAK', v_c: 91, label: 'Kip Laos (LAK)' },
+    { code: 'KWD', v_c: 18, label: 'Dinar Kuwait (KWD)' },
+    { code: 'BND', v_c: 38, label: 'Dollar Brunei Darussalam (BND)' },
   ];
 
-  const tbody = document.getElementById('kurs-lain').querySelector('tbody');
+  const tbody = document.querySelector('#kurs-lain tbody');
+  tbody.innerHTML = '';
+
   for (const item of list) {
-    const result = await fetchKursLain(item.code, item.label);
+    const kurs = await fetchKurs(item.code, item.v_c, item.label);
     const tr = document.createElement('tr');
-    const tdLabel = document.createElement('td');
-    tdLabel.textContent = result.label;
-    const tdValue = document.createElement('td');
-    tdValue.textContent = result.value
-      ? formatRp(result.value)
-      : '-';
-    tr.appendChild(tdLabel);
-    tr.appendChild(tdValue);
+    const td1 = document.createElement('td');
+    const td2 = document.createElement('td');
+    td1.textContent = kurs.label;
+    td2.textContent = kurs.value ? formatRupiah(kurs.value) : '-';
+    tr.appendChild(td1);
+    tr.appendChild(td2);
     tbody.appendChild(tr);
   }
 }
 
+// ===== Jalankan semua
 (async function init() {
   await fetchEmasUsd();
   await loadKursLain();
