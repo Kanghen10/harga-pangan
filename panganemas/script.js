@@ -56,25 +56,25 @@ async function fetchKursXML(label, url) {
 
 async function loadKursLain() {
   const list = [
-    { label: 'Dollar Hongkong (HKD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dollar Singapura (SGD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dollar Australia (AUD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=6&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Euro (EUR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=11&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Yuan China (CNY)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=14&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Pound Sterling (GBP)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=5&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'YEN Jepang (JPY)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=7&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dollar Kanada (CAD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=10&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dollar New Zealand (NZD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=13&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Ringgit Malaysia (MYR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=19&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Baht Thailand (THB)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=21&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Riyal Saudi Arabia (SAR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=12&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Peso Filipina (PHP)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=16&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Won Korea Selatan (KRW)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=17&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dong Vietnam (VND)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=153&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Kina Papua New Guinea (PGK)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=20&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Kip Laos (LAK)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=91&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dinar Kuwait (KWD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=18&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
-    { label: 'Dollar Brunei Darussalam (BND)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=38&v_bank_id=1&v_bank_name=Bank%20Indonesia' }
+    { label: 'Dollar Hongkong (HKD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Singapura (SGD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Australia (AUD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=6&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Euro (EUR)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=11&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Yuan China (CNY)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=14&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Pound Sterling (GBP)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=5&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'YEN Jepang (JPY)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=7&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Kanada (CAD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=10&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar New Zealand (NZD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=13&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Ringgit Malaysia (MYR)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=19&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Baht Thailand (THB)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=21&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Riyal Saudi Arabia (SAR)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=12&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Peso Filipina (PHP)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=16&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Won Korea Selatan (KRW)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=17&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dong Vietnam (VND)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=153&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Kina Papua New Guinea (PGK)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=20&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Kip Laos (LAK)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=91&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dinar Kuwait (KWD)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=18&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Brunei Darussalam (BND)', url: 'https://kursdollar.org/data.php?v_range=1&v_currency_id=38&v_bank_id=1&v_bank_name=Bank%20Indonesia' }
   ];
 
   const tbody = document.querySelector('#kurs-lain tbody');
