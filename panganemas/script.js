@@ -1,62 +1,104 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const emasUrl = "https://harga-emas.net/api/?v_tipe=emas-terakhir-widget";
+// ===== Format angka Rupiah singkat =====
+function formatRupiah(value) {
+  if (!value) return '-';
+  // Hapus semua karakter kecuali angka dan koma
+  const numStr = value.toString().replace(/[^\d,]/g, '');
+  const num = parseFloat(numStr.replace(',', '.'));
+  if (isNaN(num)) return '-';
+  // Tampilkan dengan format ribuan tanpa desimal
+  return 'Rp ' + num.toLocaleString('id-ID');
+}
 
-  const kursList = [
-    { code: "HKD", label: "Dollar Hongkong (HKD)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "SGD", label: "Dollar Singapura (SGD)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=4&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "AUD", label: "Dollar Australia (AUD)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "EUR", label: "Euro (EUR)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=6&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "JPY", label: "Yen Jepang (JPY)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=5&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "SAR", label: "Riyal Arab Saudi (SAR)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=7&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "CNY", label: "Yuan China (CNY)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=13&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "MYR", label: "Ringgit Malaysia (MYR)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=9&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "THB", label: "Baht Thailand (THB)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=10&v_bank_id=1&v_bank_name=Bank%20Indonesia" },
-    { code: "GBP", label: "Poundsterling (GBP)", url: "https://kursdollar.org/data.php?v_range=0&v_currency_id=8&v_bank_id=1&v_bank_name=Bank%20Indonesia" }
-  ];
-
-  const formatRupiah = (num) => {
-    if (!num) return "-";
-    return "Rp " + num.toString().replace(/[^0-9.,]/g, "");
-  };
-
-  // ==== FETCH HARGA EMAS DAN USD ====
+// ===== Ambil harga emas & kurs USD =====
+async function fetchEmasUsd() {
+  const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
-    const res = await fetch(emasUrl);
+    const res = await fetch(url);
     const data = await res.json();
 
-    const tanggal = data?.tanggal || "-";
-    const hargaEmas = data?.se_gr_kurs ? `Rp ${data.se_gr_kurs}` : "-";
-    const usd = data?.kurs_global?.USD ? `Rp ${data.kurs_global.USD}` : "-";
+    const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
-    document.getElementById("harga-emas").textContent = hargaEmas;
-    document.getElementById("kurs-usd").textContent = usd;
-    document.getElementById("tanggal-update").textContent = tanggal;
-  } catch (err) {
-    console.error("Gagal mengambil data emas:", err);
+    // Hapus titik pemisah ribuan → ubah ke angka asli
+    const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
+    const kursUsdRaw = clean(data.kurs_global).replace(/[^\d,\.]/g, '');
+    const update = clean(data.se_update).replace('*US Dollar', '').trim();
+
+    const hargaEmas = parseFloat(hargaEmasRaw);
+    const kursUsd = parseFloat(kursUsdRaw.replace(/\./g, '').replace(',', '.'));
+
+    document.getElementById('harga-emas').textContent = 'Rp ' + hargaEmas.toLocaleString('id-ID');
+    document.getElementById('kurs-usd').textContent = 'Rp ' + kursUsd.toLocaleString('id-ID', { minimumFractionDigits: 2 });
+    document.getElementById('update-info').textContent = '📅 Update terakhir: ' + update;
+  } catch (e) {
+    console.error('Gagal ambil data emas/usd:', e);
+    document.getElementById('update-info').textContent = 'Gagal memuat data.';
   }
+}
 
-  // ==== FETCH KURS MATA UANG LAIN ====
-  const tbody = document.querySelector("#kurs-lainnya tbody");
-  tbody.innerHTML = "";
+// ===== Ambil kurs negara lain (via XML dari kursdollar.org) =====
+async function fetchKurs(code, v_c, label) {
+  const url = `https://kursdollar.org/data-real-time.php?v_type=details&v_date=1761721200&v_c=${v_c}&v_d=${code}`;
+  try {
+    const res = await fetch(url);
+    const xml = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, 'text/xml');
 
-  for (const item of kursList) {
-    let nominal = "-";
-    try {
-      const res = await fetch(item.url);
-      const text = await res.text();
-      const match = text.match(/YAxisMaxValue="([\d.]+)"/);
-      if (match && match[1]) {
-        nominal = "Rp " + match[1];
-      }
-    } catch (e) {
-      console.warn("Gagal ambil kurs:", item.code, e);
-    }
+    // Ambil dataset terakhir (biasanya hari ini)
+    const datasets = doc.getElementsByTagName('dataset');
+    if (datasets.length === 0) return { label, value: null };
 
-    const tr = document.createElement("tr");
+    const lastDataset = datasets[datasets.length - 1];
+    const sets = lastDataset.getElementsByTagName('set');
+    if (sets.length === 0) return { label, value: null };
+
+    const lastValue = sets[sets.length - 1].getAttribute('value');
+    return { label, value: lastValue };
+  } catch (e) {
+    console.error('Gagal ambil kurs', code, e);
+    return { label, value: null };
+  }
+}
+
+async function loadKursLain() {
+  const list = [
+    { code: 'HKD', v_c: 3, label: 'Dollar Hongkong (HKD)' },
+    { code: 'SGD', v_c: 2, label: 'Dollar Singapura (SGD)' },
+    { code: 'AUD', v_c: 6, label: 'Dollar Australia (AUD)' },
+    { code: 'EUR', v_c: 11, label: 'Euro (EUR)' },
+    { code: 'CNY', v_c: 14, label: 'Yuan China (CNY)' },
+    { code: 'GBP', v_c: 5, label: 'Pound Sterling (GBP)' },
+    { code: 'JPY', v_c: 7, label: 'YEN Jepang (JPY)' },
+    { code: 'CAD', v_c: 10, label: 'Dollar Kanada (CAD)' },
+    { code: 'NZD', v_c: 13, label: 'Dollar New Zealand (NZD)' },
+    { code: 'MYR', v_c: 19, label: 'Ringgit Malaysia (MYR)' },
+    { code: 'THB', v_c: 21, label: 'Baht Thailand (THB)' },
+    { code: 'SAR', v_c: 12, label: 'Riyal Saudi Arabia (SAR)' },
+    { code: 'PHP', v_c: 16, label: 'Peso Filipina (PHP)' },
+    { code: 'KRW', v_c: 17, label: 'Won Korea Selatan (KRW)' },
+    { code: 'VND', v_c: 153, label: 'Dong Vietnam (VND)' },
+    { code: 'PGK', v_c: 20, label: 'Kina Papua New Guinea (PGK)' },
+    { code: 'LAK', v_c: 91, label: 'Kip Laos (LAK)' },
+    { code: 'KWD', v_c: 18, label: 'Dinar Kuwait (KWD)' },
+    { code: 'BND', v_c: 38, label: 'Dollar Brunei Darussalam (BND)' },
+  ];
+
+  const tbody = document.querySelector('#kurs-lain tbody');
+  tbody.innerHTML = '';
+
+  for (const item of list) {
+    const kurs = await fetchKurs(item.code, item.v_c, item.label);
+    const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${item.label}</td>
-      <td>${nominal}</td>
+      <td>${kurs.label}</td>
+      <td>${kurs.value ? formatRupiah(kurs.value) : '-'}</td>
     `;
     tbody.appendChild(tr);
   }
-});
+}
+
+// ===== Jalankan semua =====
+(async function init() {
+  await fetchEmasUsd();
+  await loadKursLain();
+})();
