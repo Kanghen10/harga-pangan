@@ -1,5 +1,5 @@
 // script.js
-const apiURL = "https://data.jabarprov.go.id/api-dashboard-jabar/public/pangan/list-komoditas?search=&page=1&limit=9&order=asc&order_by=name";
+const apiURL = "https://data.jabarprov.go.id/api-dashboard-jabar/public/pangan/list-komoditas?search=&page=1&limit=20&order=asc&order_by=name";
 const container = document.getElementById("data-container");
 const lastUpdateEl = document.getElementById("last-update");
 
