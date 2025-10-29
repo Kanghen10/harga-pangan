@@ -2,7 +2,7 @@
 function formatRp(value) {
   // asumsi value adalah string atau number seperti “2135673” atau “2.135.673”
   let num = typeof value === 'string' ? value.replace(/[^0-9,\.]/g, '') : value;
-  num = parseFloat(num.toString().replace(/./g, ','));
+  num = parseFloat(num.toString().replace(/,/g, '.'));
   if (isNaN(num)) return '-';
   return 'Rp ' + num.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
