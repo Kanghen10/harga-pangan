@@ -5,11 +5,11 @@ function formatRupiah(value) {
   const numStr = value.toString().replace(/[^\d,]/g, '');
   const num = parseFloat(numStr.replace(',', '.'));
   if (isNaN(num)) return '-';
-  // Tampilkan dengan format ribuan tanpa desimal
-  return 'Rp ' + num.toLocaleString('id-ID');
+  // Tampilkan tanpa desimal (biar rapi)
+  return 'Rp ' + num.toLocaleString('id-ID', { maximumFractionDigits: 0 });
 }
 
-// ===== Ambil harga emas & kurs USD =====
+// ===== Ambil harga emas & kurs USD (tidak diubah) =====
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
@@ -18,7 +18,6 @@ async function fetchEmasUsd() {
 
     const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
-    // Hapus titik pemisah ribuan → ubah ke angka asli
     const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
     const kursUsdRaw = clean(data.kurs_global).replace(/\./g, '');
     const update = clean(data.se_update).replace('*US Dollar', '').trim();
@@ -35,59 +34,54 @@ async function fetchEmasUsd() {
   }
 }
 
-// ===== Ambil kurs negara lain (via XML dari kursdollar.org) =====
-async function fetchKurs(code, v_c, label) {
-  const url = `https://kursdollar.org/data-real-time.php?v_type=details&v_date=1761721200&v_c=${v_c}&v_d=${code}`;
+// ===== Ambil kurs negara lain (via XML dari kursdollar.org/data.php) =====
+async function fetchKursXML(label, url) {
   try {
     const res = await fetch(url);
-    const xml = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'text/xml');
+    const xmlText = await res.text();
 
-    // Ambil dataset terakhir (biasanya hari ini)
-    const datasets = doc.getElementsByTagName('dataset');
-    if (datasets.length === 0) return { label, value: null };
-
-    const lastDataset = datasets[datasets.length - 1];
-    const sets = lastDataset.getElementsByTagName('set');
-    if (sets.length === 0) return { label, value: null };
-
-    const lastValue = sets[sets.length - 1].getAttribute('value');
-    return { label, value: lastValue };
+    // Ambil langsung dari YAxisMaxValue
+    const match = xmlText.match(/YAxisMaxValue="([\d.]+)"/);
+    if (match && match[1]) {
+      const nilai = match[1];
+      return { label, value: nilai };
+    } else {
+      return { label, value: null };
+    }
   } catch (e) {
-    console.error('Gagal ambil kurs', code, e);
+    console.error('Gagal ambil kurs untuk', label, e);
     return { label, value: null };
   }
 }
 
 async function loadKursLain() {
   const list = [
-    { code: 'HKD', v_c: 3, label: 'Dollar Hongkong (HKD)' },
-    { code: 'SGD', v_c: 2, label: 'Dollar Singapura (SGD)' },
-    { code: 'AUD', v_c: 6, label: 'Dollar Australia (AUD)' },
-    { code: 'EUR', v_c: 11, label: 'Euro (EUR)' },
-    { code: 'CNY', v_c: 14, label: 'Yuan China (CNY)' },
-    { code: 'GBP', v_c: 5, label: 'Pound Sterling (GBP)' },
-    { code: 'JPY', v_c: 7, label: 'YEN Jepang (JPY)' },
-    { code: 'CAD', v_c: 10, label: 'Dollar Kanada (CAD)' },
-    { code: 'NZD', v_c: 13, label: 'Dollar New Zealand (NZD)' },
-    { code: 'MYR', v_c: 19, label: 'Ringgit Malaysia (MYR)' },
-    { code: 'THB', v_c: 21, label: 'Baht Thailand (THB)' },
-    { code: 'SAR', v_c: 12, label: 'Riyal Saudi Arabia (SAR)' },
-    { code: 'PHP', v_c: 16, label: 'Peso Filipina (PHP)' },
-    { code: 'KRW', v_c: 17, label: 'Won Korea Selatan (KRW)' },
-    { code: 'VND', v_c: 153, label: 'Dong Vietnam (VND)' },
-    { code: 'PGK', v_c: 20, label: 'Kina Papua New Guinea (PGK)' },
-    { code: 'LAK', v_c: 91, label: 'Kip Laos (LAK)' },
-    { code: 'KWD', v_c: 18, label: 'Dinar Kuwait (KWD)' },
-    { code: 'BND', v_c: 38, label: 'Dollar Brunei Darussalam (BND)' },
+    { label: 'Dollar Hongkong (HKD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=3&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Singapura (SGD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=2&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Australia (AUD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=6&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Euro (EUR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=11&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Yuan China (CNY)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=14&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Pound Sterling (GBP)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=5&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'YEN Jepang (JPY)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=7&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Kanada (CAD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=10&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar New Zealand (NZD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=13&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Ringgit Malaysia (MYR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=19&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Baht Thailand (THB)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=21&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Riyal Saudi Arabia (SAR)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=12&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Peso Filipina (PHP)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=16&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Won Korea Selatan (KRW)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=17&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dong Vietnam (VND)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=153&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Kina Papua New Guinea (PGK)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=20&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Kip Laos (LAK)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=91&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dinar Kuwait (KWD)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=18&v_bank_id=1&v_bank_name=Bank%20Indonesia' },
+    { label: 'Dollar Brunei Darussalam (BND)', url: 'https://kursdollar.org/data.php?v_range=0&v_currency_id=38&v_bank_id=1&v_bank_name=Bank%20Indonesia' }
   ];
 
   const tbody = document.querySelector('#kurs-lain tbody');
   tbody.innerHTML = '';
 
   for (const item of list) {
-    const kurs = await fetchKurs(item.code, item.v_c, item.label);
+    const kurs = await fetchKursXML(item.label, item.url);
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${kurs.label}</td>
