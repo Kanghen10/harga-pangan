@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Harga Emas & Kurs Mata Uang</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Harga Emas & Kurs Mata Uang</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Harga Emas & Kurs Mata Uang</h1>
-    <p id="update-info">Memuat data…</p>
+    <h1>Dashboard Harga Emas & Kurs Mata Uang</h1>
+    <p id="updateDate">Memuat tanggal...</p>
   </header>
 
-  <section class="cards">
-    <div class="card card-gold">
-      <h2>Harga Emas / gram</h2>
-      <p class="value" id="harga-emas">-</p>
-    </div>
+  <main>
+    <section class="card gold">
+      <h2>Harga Emas per Gram</h2>
+      <p id="goldPrice">Memuat data...</p>
+    </section>
 
-    <div class="card card-usd">
-      <h2>Kurs USD → Rupiah</h2>
-      <p class="value" id="kurs-usd">-</p>
-    </div>
-  </section>
+    <section class="card usd">
+      <h2>Kurs Dollar Amerika (USD)</h2>
+      <p id="usdRate">Memuat data...</p>
+    </section>
 
-  <section class="table-section">
-    <h2>Kurs Mata Uang Lain (ke Rupiah)</h2>
-    <table id="kurs-lain">
-      <thead>
-        <tr><th>Mata Uang</th><th>Kurs (Rp)</th></tr>
-      </thead>
-      <tbody>
-        <!-- Baris akan di-isi via JS -->
-      </tbody>
-    </table>
-  </section>
+    <section class="card others">
+      <h2>Kurs Mata Uang Lain (ke Rupiah)</h2>
+      <table>
+        <thead>
+          <tr><th>Mata Uang</th><th>Kurs (Rp)</th></tr>
+        </thead>
+        <tbody id="otherRates">
+          <tr><td>Dollar Hongkong (HKD)</td><td>-</td></tr>
+          <tr><td>Dollar Singapura (SGD)</td><td>-</td></tr>
+          <tr><td>Dollar Australia (AUD)</td><td>-</td></tr>
+          <tr><td>Euro (EUR)</td><td>-</td></tr>
+          <tr><td>Yuan China (CNY)</td><td>-</td></tr>
+          <tr><td>Pound Sterling (GBP)</td><td>-</td></tr>
+          <tr><td>YEN Jepang (JPY)</td><td>-</td></tr>
+          <tr><td>Dollar Canada (CAD)</td><td>-</td></tr>
+          <tr><td>Dollar New Zealand (NZD)</td><td>-</td></tr>
+          <tr><td>Ringgit Malaysia (MYR)</td><td>-</td></tr>
+          <tr><td>BAHT Thailand (THB)</td><td>-</td></tr>
+          <tr><td>Riyal Saudi Arabia (SAR)</td><td>-</td></tr>
+          <tr><td>Peso Filipina (PHP)</td><td>-</td></tr>
+          <tr><td>Won Korea Selatan (KRW)</td><td>-</td></tr>
+          <tr><td>Dong Vietnam (VND)</td><td>-</td></tr>
+          <tr><td>Kina Papua New Guinea (PGK)</td><td>-</td></tr>
+          <tr><td>Kip Laos (LAK)</td><td>-</td></tr>
+          <tr><td>Dinar Kuwait (KWD)</td><td>-</td></tr>
+          <tr><td>Dollar Brunei Darussalam (BND)</td><td>-</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>Sumber : kursdollar.org dan harga-emas.net</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
