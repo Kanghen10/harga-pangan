@@ -20,14 +20,14 @@ async function fetchEmasUsd() {
 
     // Hapus titik pemisah ribuan → ubah ke angka asli
     const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
-    const kursUsdRaw = clean(data.kurs_global).replace(/[^\d,\.]/g, '');
+    const kursUsdRaw = clean(data.kurs_global).replace(/\./g, '');
     const update = clean(data.se_update).replace('*US Dollar', '').trim();
 
     const hargaEmas = parseFloat(hargaEmasRaw);
     const kursUsd = parseFloat(kursUsdRaw.replace(/\./g, '').replace(',', '.'));
 
     document.getElementById('harga-emas').textContent = 'Rp ' + hargaEmas.toLocaleString('id-ID');
-    document.getElementById('kurs-usd').textContent = 'Rp ' + kursUsd.toLocaleString('id-ID', { minimumFractionDigits: 2 });
+    document.getElementById('kurs-usd').textContent = 'Rp ' + kursUsd.toLocaleString('id-ID');
     document.getElementById('update-info').textContent = '📅 Update terakhir: ' + update;
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
