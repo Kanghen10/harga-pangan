@@ -61,8 +61,8 @@ body {
   margin-top: 2px;
 }
 
-.kondisi-harga.naik span { color: #028a0f; }
-.kondisi-harga.turun span { color: #d32f2f; }
+.kondisi-harga.naik span { color: #FF2900; }
+.kondisi-harga.turun span { color: #00ED0C; }
 .kondisi-harga.tetap span { color: #777; }
 
 .kondisi-harga small {
