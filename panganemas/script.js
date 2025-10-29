@@ -24,7 +24,7 @@ async function fetchEmasUsd() {
     const update = clean(data.se_update).replace('*US Dollar', '').trim();
 
     const hargaEmas = parseFloat(hargaEmasRaw);
-    const kursUsd = parseFloat(kursUsdRaw.replace(/\./g, '').replace(',', '.'));
+    const kursUsd = parseFloat(kursUsdRaw);
 
     document.getElementById('harga-emas').textContent = 'Rp ' + hargaEmas.toLocaleString('id-ID');
     document.getElementById('kurs-usd').textContent = 'Rp ' + kursUsd.toLocaleString('id-ID');
