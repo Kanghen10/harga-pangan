@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Harga Pangan Rata-Rata</title>
+  <title>Harga Pangan Rata-Rata di JAWA BARAT</title>
   <style>
     :root{
       --bg:#f7f7f8;
@@ -144,9 +144,25 @@
 
     .footer-note{
       text-align:center;
-      margin-top:14px;
+      margin-top:20px;
       color:var(--muted);
       font-size:13px;
+      line-height:1.4;
+    }
+
+    #pagination-controls button {
+      padding: 6px 14px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #pagination-controls button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -154,7 +170,7 @@
   <div class="wrap">
     <header>
       <div>
-        <h1>Harga Pangan Rata-Rata</h1>
+        <h1>Harga Pangan Rata-Rata di JAWA BARAT</h1>
         <div class="meta" id="last-update">Memuat data...</div>
       </div>
       <div style="text-align:right;">
@@ -167,7 +183,10 @@
         <!-- cards akan di-render oleh script.js -->
       </div>
 
-      <p class="footer-note"></p>
+      <p class="footer-note">
+        Data harga pangan: © Pemerintah Provinsi Jawa Barat<br>
+        <a href="" target="_blank" style="color:#0a84ff;text-decoration:none;">data.jabarprov.go.id</a>
+      </p>
     </main>
   </div>
 

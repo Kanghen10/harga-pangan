@@ -1,4 +1,4 @@
-// ✅ script.js — final fix compatible with your index.html
+// ✅ script.js — final with Rp for diff and attribution note
 
 const apiURL = "https://data.jabarprov.go.id/api-dashboard-jabar/public/pangan/list-komoditas?search=&page=1&limit=62&order=asc&order_by=name";
 
@@ -33,7 +33,7 @@ function buildIndicatorHTML(kondisi_raw, diff_raw, diffPercent_raw) {
   const pctText = diffPercent !== null && !isNaN(diffPercent)
     ? `${diffPercent > 0 ? "+" : ""}${diffPercent.toFixed(2)}%`
     : "-";
-  const diffText = `${diff > 0 ? "+" : ""}${formatNumber(diff)}`;
+  const diffText = `${diff > 0 ? "+" : ""}Rp ${formatNumber(diff)}`;
 
   return `
     <div class="indicator" style="color:${color}">
