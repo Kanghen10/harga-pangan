@@ -1,16 +1,15 @@
-// ===== Utility untuk format angka Indonesia (Rp 2.144.196,00)
+// ===== Format angka Rupiah singkat =====
 function formatRupiah(value) {
   if (!value) return '-';
-  // Hapus semua karakter non-angka dan koma/titik
-  let numStr = value.toString().replace(/[^0-9,\.]/g, '');
-  // Jika punya koma (sebagai desimal), ubah titik jadi kosong
-  numStr = numStr.replace(/\./g, '').replace(',', '.');
-  const num = parseFloat(numStr);
+  // Hapus semua karakter kecuali angka dan koma
+  const numStr = value.toString().replace(/[^\d,]/g, '');
+  const num = parseFloat(numStr.replace(',', '.'));
   if (isNaN(num)) return '-';
-  return 'Rp ' + num.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  // Tampilkan dengan format ribuan tanpa desimal
+  return 'Rp ' + num.toLocaleString('id-ID');
 }
 
-// ===== Ambil harga emas & kurs USD
+// ===== Ambil harga emas & kurs USD =====
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
@@ -18,12 +17,17 @@ async function fetchEmasUsd() {
     const data = await res.json();
 
     const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
-    const hargaEmas = clean(data.se_gr_kurs);
-    const kursUsd = clean(data.kurs_global);
+
+    // Hapus titik pemisah ribuan → ubah ke angka asli
+    const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
+    const kursUsdRaw = clean(data.kurs_global).replace(/[^\d,\.]/g, '');
     const update = clean(data.se_update).replace('*US Dollar', '').trim();
 
-    document.getElementById('harga-emas').textContent = formatRupiah(hargaEmas);
-    document.getElementById('kurs-usd').textContent = formatRupiah(kursUsd);
+    const hargaEmas = parseFloat(hargaEmasRaw);
+    const kursUsd = parseFloat(kursUsdRaw.replace(/\./g, '').replace(',', '.'));
+
+    document.getElementById('harga-emas').textContent = 'Rp ' + hargaEmas.toLocaleString('id-ID');
+    document.getElementById('kurs-usd').textContent = 'Rp ' + kursUsd.toLocaleString('id-ID', { minimumFractionDigits: 2 });
     document.getElementById('update-info').textContent = '📅 Update terakhir: ' + update;
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
@@ -31,7 +35,7 @@ async function fetchEmasUsd() {
   }
 }
 
-// ===== Ambil kurs negara lain (via XML dari kursdollar.org)
+// ===== Ambil kurs negara lain (via XML dari kursdollar.org) =====
 async function fetchKurs(code, v_c, label) {
   const url = `https://kursdollar.org/data-real-time.php?v_type=details&v_date=1761721200&v_c=${v_c}&v_d=${code}`;
   try {
@@ -39,8 +43,15 @@ async function fetchKurs(code, v_c, label) {
     const xml = await res.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml, 'text/xml');
-    const sets = doc.getElementsByTagName('set');
+
+    // Ambil dataset terakhir (biasanya hari ini)
+    const datasets = doc.getElementsByTagName('dataset');
+    if (datasets.length === 0) return { label, value: null };
+
+    const lastDataset = datasets[datasets.length - 1];
+    const sets = lastDataset.getElementsByTagName('set');
     if (sets.length === 0) return { label, value: null };
+
     const lastValue = sets[sets.length - 1].getAttribute('value');
     return { label, value: lastValue };
   } catch (e) {
@@ -78,17 +89,15 @@ async function loadKursLain() {
   for (const item of list) {
     const kurs = await fetchKurs(item.code, item.v_c, item.label);
     const tr = document.createElement('tr');
-    const td1 = document.createElement('td');
-    const td2 = document.createElement('td');
-    td1.textContent = kurs.label;
-    td2.textContent = kurs.value ? formatRupiah(kurs.value) : '-';
-    tr.appendChild(td1);
-    tr.appendChild(td2);
+    tr.innerHTML = `
+      <td>${kurs.label}</td>
+      <td>${kurs.value ? formatRupiah(kurs.value) : '-'}</td>
+    `;
     tbody.appendChild(tr);
   }
 }
 
-// ===== Jalankan semua
+// ===== Jalankan semua =====
 (async function init() {
   await fetchEmasUsd();
   await loadKursLain();
