@@ -23,9 +23,9 @@ function buildIndicatorHTML(kondisi_raw, diff_raw, diffPercent_raw) {
   let icon = "", color = "";
 
   if (kondisi === "naik") {
-    icon = "▲"; color = "#059669"; // hijau
+    icon = "▲"; color = "#e11d48"; // Merah
   } else if (kondisi === "turun") {
-    icon = "▼"; color = "#e11d48"; // merah
+    icon = "▼"; color = "#059669"; // Hijau
   } else {
     icon = "⭮"; color = "#9ca3af"; // abu
   }
