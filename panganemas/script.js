@@ -20,7 +20,7 @@ async function fetchEmasUsd() {
 
     // Hapus titik pemisah ribuan → ubah ke angka asli
     const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
-    const kursUsdRaw = clean(data.kurs_global).replace(/[^\d,\.]/g, '');
+    const kursUsdRaw = clean(data.kurs_global).replace(/\./g, '');
     const update = clean(data.se_update).replace('*US Dollar', '').trim();
 
     const hargaEmas = parseFloat(hargaEmasRaw);
