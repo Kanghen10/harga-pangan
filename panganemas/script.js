@@ -4,7 +4,6 @@ async function fetchEmasUsd() {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Fungsi bersihkan HTML
     const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
     const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
@@ -19,11 +18,11 @@ async function fetchEmasUsd() {
     document.getElementById('harga-emas').textContent = format(hargaEmas);
     document.getElementById('kurs-usd').textContent = format(kursUsd);
     document.getElementById('update-info').textContent = 'Update terakhir: ' + update;
-
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
     document.getElementById('update-info').textContent = 'Gagal memuat data.';
   }
 }
 
+// Jalankan otomatis
 fetchEmasUsd();
