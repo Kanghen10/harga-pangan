@@ -1,0 +1,87 @@
+:root {
+  --bg: #f7f7f8;
+  --card: #ffffff;
+  --green: #d9f7df;
+  --red: #ffe5e5;
+  --text: #222;
+  --muted: #666;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+#subtitle {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 0.75rem;
+}
+
+.price {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.status {
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 0.9rem;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status.fall {
+  background: var(--green);
+  color: #097a3e;
+}
+
+.status.rise {
+  background: var(--red);
+  color: #a91414;
+}
+
+.error {
+  text-align: center;
+  color: #c00;
+  font-weight: bold;
+}
