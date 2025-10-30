@@ -2,73 +2,89 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
-  background: #f6f8fb;
+  font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
+  background: #f7f8fa;
   color: #222;
   padding: 20px;
-  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
+/* Header */
 header {
   text-align: center;
   margin-bottom: 30px;
 }
 header h1 {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: #2b3d63;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 #update-info {
   color: #666;
   font-size: 0.95rem;
 }
 
-/* Tabel utama */
+/* Tabel */
 .table-section {
+  width: 100%;
   max-width: 600px;
-  margin: 0 auto;
 }
+
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
   border-radius: 10px;
   overflow: hidden;
+  background: #fff;
   box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 thead {
-  background: #e0e7ff;
+  background-color: #e3e8ff;
 }
 th, td {
-  padding: 14px 16px;
-  text-align: left;
+  padding: 14px 18px;
   font-size: 1rem;
 }
 th {
+  text-align: left;
   color: #1a2a5c;
   font-weight: 600;
+  border-bottom: 2px solid #d4dbf9;
 }
-tbody tr:nth-child(odd) { background: #f9fbff; }
-tbody tr:nth-child(even) { background: #eef3ff; }
-tbody tr:hover {
-  background: #dce4ff;
-  transition: background 0.2s ease;
+td:nth-child(1) {
+  color: #333;
 }
 td:nth-child(2) {
-  font-weight: bold;
-  color: #1a3f8b;
   text-align: right;
+  font-weight: bold;
+  color: #123e8a;
 }
 
+/* Warna bergantian */
+tbody tr:nth-child(odd) {
+  background-color: #f9faff;
+}
+tbody tr:nth-child(even) {
+  background-color: #eef2ff;
+}
+tbody tr:hover {
+  background-color: #dbe3ff;
+  transition: background 0.2s ease;
+}
+
+/* Footer */
 footer {
   text-align: center;
-  font-size: 0.9rem;
+  margin-top: 40px;
   color: #777;
-  margin-top: 30px;
+  font-size: 0.9rem;
 }
 footer a {
-  color: #4a90e2;
+  color: #4a6edb;
   text-decoration: none;
 }
 footer a:hover {

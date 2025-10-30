@@ -1,11 +1,10 @@
-// ===== Ambil dan tampilkan harga emas & kurs USD =====
 async function fetchEmasUsd() {
   const url = 'https://harga-emas.net/api/?v_tipe=emas-terakhir-widget';
   try {
     const res = await fetch(url);
     const data = await res.json();
 
-    // Hapus tag HTML jika ada
+    // Fungsi bersihkan HTML
     const clean = (html) => html.replace(/<\/?[^>]+(>|$)/g, '').trim();
 
     const hargaEmasRaw = clean(data.se_gr_kurs).replace(/\./g, '');
@@ -15,12 +14,11 @@ async function fetchEmasUsd() {
     const hargaEmas = parseFloat(hargaEmasRaw);
     const kursUsd = parseFloat(kursUsdRaw);
 
-    // Format angka tanpa desimal
     const format = (n) => 'Rp ' + n.toLocaleString('id-ID', { maximumFractionDigits: 0 });
 
     document.getElementById('harga-emas').textContent = format(hargaEmas);
     document.getElementById('kurs-usd').textContent = format(kursUsd);
-    document.getElementById('update-info').textContent = '📅 Update terakhir: ' + update;
+    document.getElementById('update-info').textContent = 'Update terakhir: ' + update;
 
   } catch (e) {
     console.error('Gagal ambil data emas/usd:', e);
@@ -28,5 +26,4 @@ async function fetchEmasUsd() {
   }
 }
 
-// ===== Jalankan =====
 fetchEmasUsd();
