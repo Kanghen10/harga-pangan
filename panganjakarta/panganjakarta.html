@@ -4,15 +4,150 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Harga Pangan Jakarta</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root {
+      --bg: #f7f7f8;
+      --card: #ffffff;
+      --green: #d9f7df;
+      --red: #ffe5e5;
+      --text: #222;
+      --muted: #666;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    #subtitle {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 0.75rem;
+    }
+
+    .price {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .status {
+      border-radius: 8px;
+      padding: 6px;
+      font-size: 0.9rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .status.fall {
+      background: var(--green);
+      color: #097a3e;
+    }
+
+    .status.rise {
+      background: var(--red);
+      color: #a91414;
+    }
+
+    .error {
+      text-align: center;
+      color: #c00;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <main class="container">
     <h1>Harga rata-rata komoditas hari ini di Jakarta</h1>
-    <p id="subtitle">Harga dibandingkan dengan hari sebelumnya...</p>
+    <p id="subtitle">Memuat data...</p>
     <div id="commodity-list" class="grid"></div>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const API_URL = "https://infopangan.jakarta.go.id/api2/v1/public/master-data/commodities?date=";
+    const listContainer = document.getElementById("commodity-list");
+    const subtitle = document.getElementById("subtitle");
+
+    async function fetchData() {
+      try {
+        const response = await fetch(API_URL);
+        const json = await response.json();
+        if (json.status !== 200) throw new Error("Gagal ambil data");
+
+        const items = json.data.data;
+        const date = json.data.selected_price_date;
+
+        subtitle.textContent = `Harga dibandingkan dengan hari sebelumnya ${new Date(date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}`;
+
+        renderItems(items);
+      } catch (err) {
+        listContainer.innerHTML = `<p class="error">Gagal memuat data (${err.message})</p>`;
+      }
+    }
+
+    function renderItems(items) {
+      listContainer.innerHTML = "";
+      items.forEach(item => {
+        const diff = item.newest_price - item.prev_price;
+        const diffText = diff > 0 ? `Naik Rp ${diff.toLocaleString("id-ID")}` : `Turun Rp ${Math.abs(diff).toLocaleString("id-ID")}`;
+        const isRise = diff > 0;
+
+        // buat elemen card
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // gunakan referrerpolicy agar gambar tidak diblokir (CORP)
+        card.innerHTML = `
+          <img src="${item.image_path}" alt="${item.name}" referrerpolicy="no-referrer" />
+          <h3>${item.name}</h3>
+          <p class="price">Rp ${item.newest_price.toLocaleString("id-ID")}/${item.unit}</p>
+          <div class="status ${isRise ? "rise" : "fall"}">
+            <span>${isRise ? "↑" : "↓"} ${diffText}</span>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
