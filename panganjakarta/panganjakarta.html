@@ -139,7 +139,7 @@
         const items = json.data.data;
         const date = json.data.selected_price_date;
 
-        subtitle.textContent = `Harga dibandingkan dengan hari sebelumnya ${new Date(date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}`;
+        subtitle.textContent = `Harga Hari ini ${new Date(date).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}`;
 
         renderItems(items);
       } catch (err) {
