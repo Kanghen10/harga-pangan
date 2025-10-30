@@ -19,12 +19,16 @@
       font-family: "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 1.5rem;
+      flex: 1;
     }
 
     h1 {
@@ -57,11 +61,10 @@
       transform: translateY(-4px);
     }
 
-    .card img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 0.75rem;
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      min-height: 48px;
     }
 
     .price {
@@ -87,6 +90,23 @@
       color: #a91414;
     }
 
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 1rem;
+      border-top: 1px solid #ddd;
+    }
+
+    footer a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
     .error {
       text-align: center;
       color: #c00;
@@ -100,6 +120,10 @@
     <p id="subtitle">Memuat data...</p>
     <div id="commodity-list" class="grid"></div>
   </main>
+
+  <footer>
+    Data bersumber dari <a>Info Pangan Jakarta</a> © Pemerintah Provinsi DKI Jakarta
+  </footer>
 
   <script>
     const API_URL = "https://infopangan.jakarta.go.id/api2/v1/public/master-data/commodities?date=";
@@ -130,13 +154,9 @@
         const diffText = diff > 0 ? `Naik Rp ${diff.toLocaleString("id-ID")}` : `Turun Rp ${Math.abs(diff).toLocaleString("id-ID")}`;
         const isRise = diff > 0;
 
-        // buat elemen card
         const card = document.createElement("div");
         card.className = "card";
-
-        // gunakan referrerpolicy agar gambar tidak diblokir (CORP)
         card.innerHTML = `
-          <img src="${item.image_path}" alt="${item.name}" referrerpolicy="no-referrer" />
           <h3>${item.name}</h3>
           <p class="price">Rp ${item.newest_price.toLocaleString("id-ID")}/${item.unit}</p>
           <div class="status ${isRise ? "rise" : "fall"}">
