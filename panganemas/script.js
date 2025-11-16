@@ -9,9 +9,7 @@ async function fetchEmasUsd() {
 
     // --- USD ---
     const usdLine = lines[0];
-    const usdValue = usdLine.match(/Rp([\d.,]+)/)[1]
-      .replace(/\./g, "")
-      .replace(/,/g, "");
+    const usdValue = usdLine.match(/Rp([\d.]+)/)[1].replace(/\./g, "");
     const usd = parseInt(usdValue);
 
     document.getElementById("kurs-usd").textContent =
