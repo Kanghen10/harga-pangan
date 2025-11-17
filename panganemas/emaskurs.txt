@@ -1,5 +1,5 @@
 USD 16.714
-"Harga Emas" = Rp2.197.239 /gr
+"Harga Emas" = Rp2.193.135 /gr
 ==============
 Kurs	Beli	Jual
 AUD	10889	10914
@@ -15,4 +15,4 @@ NZD	9451	9476
 SAR	4447	4465
 SEK	1741	1791
 SGD	12845	12875
-THB	512.5	516.73
+THB	512.4	516.73
