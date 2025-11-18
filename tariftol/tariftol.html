@@ -1,79 +1,165 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Cek Tarif Tol Indonesia</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f7fb;
-  margin: 0;
-  padding: 20px;
-}
+    body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        background: #f2f4f7;
+        color: #333;
+    }
 
-.container {
-  max-width: 600px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+    header {
+        background: #0057a3;
+        color: white;
+        padding: 16px 20px;
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+    .container {
+        max-width: 720px;
+        margin: auto;
+        padding: 20px;
+    }
 
-select, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-}
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        margin-bottom: 20px;
+    }
 
-button {
-  background: #0066ff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
+    h2 {
+        margin-top: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
 
-button:hover {
-  background: #0053cc;
-}
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
 
-#output {
-  background: #eef3ff;
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  display: none;
-}
+    select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        margin-bottom: 16px;
+        transition: border-color .2s;
+    }
+
+    select:focus {
+        border-color: #0057a3;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        background: #0057a3;
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background .25s;
+    }
+
+    button:hover {
+        background: #00447f;
+    }
+
+    #output {
+        display: none;
+        margin-top: 22px;
+        padding: 22px;
+        background: #ffffff;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    #output p {
+        margin: 6px 0;
+        font-size: 15px;
+    }
+
+    #output h3 {
+        margin-top: 0;
+        font-size: 22px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+        .card, #output {
+            padding: 18px;
+        }
+        select, button {
+            font-size: 15px;
+        }
+    }
 </style>
 
 </head>
 <body>
 
+<header>
+    Cek Tarif Tol Indonesia
+</header>
+
 <div class="container">
-  <h2>Cek Tarif Tol Indonesia</h2>
 
-  <select id="toltrans"></select>
-  <select id="ruas"></select>
-  <select id="asal"></select>
-  <select id="tujuan"></select>
+    <div class="card">
+        <h2>Pencarian Tarif Tol</h2>
 
-  <button onclick="cekTarif()">Cek Tarif</button>
+        <label for="toltrans">TOL TRANS</label>
+        <select id="toltrans">
+            <option value="">Memuat...</option>
+        </select>
 
-  <div id="output"></div>
+        <label for="ruas">RUAS</label>
+        <select id="ruas">
+            <option value="">Pilih Tol Trans terlebih dahulu</option>
+        </select>
+
+        <label for="asal">ASAL</label>
+        <select id="asal">
+            <option value="">Pilih Ruas terlebih dahulu</option>
+        </select>
+
+        <label for="tujuan">TUJUAN</label>
+        <select id="tujuan">
+            <option value="">Pilih Asal terlebih dahulu</option>
+        </select>
+
+        <button onclick="cekTarif()">Cek Tarif</button>
+    </div>
+
+    <div id="output"></div>
+
 </div>
 
 <script src="tariftol.js"></script>
-
 </body>
 </html>

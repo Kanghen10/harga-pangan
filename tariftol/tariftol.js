@@ -108,6 +108,25 @@ function cekTarif() {
     <p><b>Tarif Gol IV–V:</b> Rp ${Number(d.gol45).toLocaleString()}</p>
     <p><b>Sistem Transaksi:</b> ${d.sistem}</p>
     <p><b>ATL:</b> ${d.atl}</p>
+
+    <!-- Keterangan Golongan -->
+    <div style="
+      margin-top:18px;
+      padding:12px;
+      border-radius:10px;
+      background:#f4f6f8;
+      font-size:13px;
+      line-height:1.45;
+      color:#333;
+    ">
+      <b>Keterangan Golongan Kendaraan:</b><br>
+      • <b>Golongan I</b> – Sedan, jip, pick-up/truk kecil, bus.<br>
+      • <b>Golongan II</b> – Truk besar 2 gandar.<br>
+      • <b>Golongan III</b> – Truk besar 3 gandar.<br>
+      • <b>Golongan IV</b> – Truk besar 4 gandar.<br>
+      • <b>Golongan V</b> – Truk besar 5 gandar.<br>
+      • <b>Golongan VI</b> – Kendaraan roda dua (hanya di beberapa ruas, contoh: Tol Bali Mandara).
+    </div>
   `;
 }
 
