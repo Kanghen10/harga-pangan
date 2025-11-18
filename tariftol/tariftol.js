@@ -1,15 +1,14 @@
-// tariftol.js — versi final dengan JSON statik sebagai database
-const JSON_PATH = "tariftol.json";
+// tariftol.js — menggunakan tariftol.json statik sebagai data
+const JSON_URL = "tariftol.json";
 let tolData = [];
 
-// Load JSON data, then init dropdowns
-async function loadData() {
+async function loadTolData() {
   try {
-    const resp = await fetch(JSON_PATH);
+    const resp = await fetch(JSON_URL);
     tolData = await resp.json();
     initDropdowns();
-  } catch (err) {
-    console.error("Gagal memuat data tarif tol:", err);
+  } catch (error) {
+    console.error("Gagal memuat data tol:", error);
   }
 }
 
@@ -19,86 +18,95 @@ function initDropdowns() {
   const selAsal = document.getElementById("asal");
   const selTujuan = document.getElementById("tujuan");
 
-  // Unique lists
-  const listTrans = [...new Set(tolData.map(d => d.trans))].sort();
-  selTrans.innerHTML = "<option value=\"\">Pilih Tol Trans</option>" + listTrans.map(v => `<option value="${v}">${v}</option>`).join("");
+  // isi Tol Trans unik
+  const transList = Array.from(new Set(tolData.map(d => d.trans))).sort();
+  selTrans.innerHTML = `<option value="">Pilih TOL TRANS</option>` +
+    transList.map(t => `<option value="${t}">${t}</option>`).join("");
 
   selTrans.addEventListener("change", () => {
-    const val = selTrans.value;
-    selRuas.innerHTML = "<option value=\"\">Pilih Ruas</option>";
-    selAsal.innerHTML = "<option value=\"\">Pilih Asal</option>";
-    selTujuan.innerHTML = "<option value=\"\">Pilih Tujuan</option>";
-    if (!val) return;
-    const listR = [...new Set(tolData.filter(d => d.trans === val).map(d => d.ruas))].sort();
-    selRuas.innerHTML += listR.map(r => `<option value="${r}">${r}</option>`).join("");
+    const v = selTrans.value;
+    // isi ruas sesuai trans
+    const ruasList = Array.from(new Set(tolData
+      .filter(d => d.trans === v)
+      .map(d => d.ruas))).sort();
+    selRuas.innerHTML = `<option value="">Pilih RUAS</option>` +
+      ruasList.map(r => `<option value="${r}">${r}</option>`).join("");
+
+    // reset asal & tujuan
+    selAsal.innerHTML = `<option value="">Pilih ASAL</option>`;
+    selTujuan.innerHTML = `<option value="">Pilih TUJUAN</option>`;
   });
 
   selRuas.addEventListener("change", () => {
-    const val = selRuas.value;
-    selAsal.innerHTML = "<option value=\"\">Pilih Asal</option>";
-    selTujuan.innerHTML = "<option value=\"\">Pilih Tujuan</option>";
-    if (!val) return;
-    const listA = [...new Set(tolData.filter(d => d.ruas === val).map(d => d.asal))].sort();
-    selAsal.innerHTML += listA.map(a => `<option value="${a}">${a}</option>`).join("");
+    const v = selRuas.value;
+    const asalList = Array.from(new Set(tolData
+      .filter(d => d.ruas === v)
+      .map(d => d.asal))).sort();
+    document.getElementById("asal").innerHTML = `<option value="">Pilih ASAL</option>` +
+      asalList.map(a => `<option value="${a}">${a}</option>`).join("");
+
+    // clear tujuan
+    selTujuan.innerHTML = `<option value="">Pilih TUJUAN</option>`;
   });
 
   selAsal.addEventListener("change", () => {
-    const val = selAsal.value;
-    selTujuan.innerHTML = "<option value=\"\">Pilih Tujuan</option>";
-    if (!val) return;
-    const ru = selRuas.value;
-    const listT = [...new Set(tolData.filter(d => d.asal === val && d.ruas === ru).map(d => d.tujuan))].sort();
-    selTujuan.innerHTML += listT.map(t => `<option value="${t}">${t}</option>`).join("");
+    const asal = selAsal.value;
+    const ruas = selRuas.value;
+    const tujuanList = Array.from(new Set(tolData
+      .filter(d => d.asal === asal && d.ruas === ruas)
+      .map(d => d.tujuan))).sort();
+    selTujuan.innerHTML = `<option value="">Pilih TUJUAN</option>` +
+      tujuanList.map(t => `<option value="${t}">${t}</option>`).join("");
   });
 
   document.getElementById("cekBtn").addEventListener("click", showResult);
 }
 
 function showResult() {
-  const t = document.getElementById("toltrans").value;
-  const r = document.getElementById("ruas").value;
-  const a = document.getElementById("asal").value;
-  const u = document.getElementById("tujuan").value;
-  const out = document.getElementById("output");
+  const trans = document.getElementById("toltrans").value;
+  const ruas = document.getElementById("ruas").value;
+  const asal = document.getElementById("asal").value;
+  const tujuan = document.getElementById("tujuan").value;
+  const output = document.getElementById("output");
 
-  if (!t || !r || !a || !u) {
-    out.style.display = "block";
-    out.innerHTML = "<p style=\"color:red\">Lengkapi semua pilihan terlebih dahulu.</p>";
+  if (!trans || !ruas || !asal || !tujuan) {
+    output.style.display = "block";
+    output.innerHTML = `<div class="row"><div class="label">Pesan:</div><div class="value">Lengkapi semua pilihan.</div></div>`;
     return;
   }
 
-  const item = tolData.find(d => d.trans === t && d.ruas === r && d.asal === a && d.tujuan === u);
+  const item = tolData.find(d =>
+    d.trans === trans && d.ruas === ruas && d.asal === asal && d.tujuan === tujuan
+  );
+
   if (!item) {
-    out.style.display = "block";
-    out.innerHTML = "<p style=\"color:red\">Data tidak ditemukan untuk kombinasi ini.</p>";
+    output.style.display = "block";
+    output.innerHTML = `<div class="row"><div class="label">Pesan:</div><div class="value">Data tidak ditemukan.</div></div>`;
     return;
   }
 
-  // compute perkm if missing
+  // hitung perkm atau ATL jika kosong
   let perkm = item.perkm;
-  if ((!perkm || perkm==="") && item.gol1 && item.panjang) {
+  if ((!perkm || perkm === "") && item.gol1 && item.panjang) {
     perkm = Math.round(item.gol1 / item.panjang);
   }
-
-  // compute atl if missing
   let atl = item.atl;
-  if ((!atl || atl==="") && item.gol1) {
+  if ((!atl || atl === "") && item.gol1) {
     atl = Math.round(item.gol1 * 1.05);
   }
 
-  out.style.display = "block";
-  out.innerHTML = `
-    <div><b>Rute:</b> ${item.asal} → ${item.tujuan}</div>
-    <div><b>Ruas:</b> ${item.ruas}</div>
-    <div><b>Panjang Jalan Tol:</b> ${item.panjang} km</div>
-    <div><b>Tarif Gol I:</b> Rp ${item.gol1.toLocaleString('id-ID')}</div>
-    <div><b>Tarif Gol II & III:</b> Rp ${item.gol23.toLocaleString('id-ID')}</div>
-    <div><b>Tarif Gol IV & V:</b> Rp ${item.gol45.toLocaleString('id-ID')}</div>
-    <div><b>Sistem Transaksi:</b> ${item.sistem}</div>
-    <div><b>ATL (estimasi):</b> ${atl ? 'Rp ' + atl.toLocaleString('id-ID') : '-'}</div>
-    <div><b>Tarif per Kilometer:</b> ${perkm ? 'Rp ' + perkm.toLocaleString('id-ID') : '-'}</div>
+  output.style.display = "block";
+  output.innerHTML = `
+    <div class="row"><div class="label">Rute:</div><div class="value">${item.asal} → ${item.tujuan}</div></div>
+    <div class="row"><div class="label">Ruas:</div><div class="value">${item.ruas}</div></div>
+    <div class="row"><div class="label">Panjang:</div><div class="value">${item.panjang} km</div></div>
+    <div class="row"><div class="label">Tarif Gol I:</div><div class="value">Rp ${item.gol1.toLocaleString('id-ID')}</div></div>
+    <div class="row"><div class="label">Tarif Gol II & III:</div><div class="value">Rp ${item.gol23.toLocaleString('id-ID')}</div></div>
+    <div class="row"><div class="label">Tarif Gol IV & V:</div><div class="value">Rp ${item.gol45.toLocaleString('id-ID')}</div></div>
+    <div class="row"><div class="label">Sistem Transaksi:</div><div class="value">${item.sistem || '-'}</div></div>
+    <div class="row"><div class="label">ATL (estimasi):</div><div class="value">${atl ? 'Rp ' + atl.toLocaleString('id-ID') : '-'}</div></div>
+    <div class="row"><div class="label">Tarif / Km:</div><div class="value">${perkm ? 'Rp ' + perkm.toLocaleString('id-ID') : '-'}</div></div>
   `;
 }
 
-// kick off
-document.addEventListener("DOMContentLoaded", loadData);
+document.addEventListener("DOMContentLoaded", loadTolData);

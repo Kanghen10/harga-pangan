@@ -1,66 +1,32 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cek Tarif Tol Indonesia</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f5f6f7;
-    margin: 0; padding: 20px;
-  }
-  .card {
-    background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    max-width: 600px;
-    margin: auto;
-  }
-  h2 {
-    text-align: center;
-    margin-top: 0;
-  }
-  select, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-  }
-  button {
-    background: #0066ff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #output {
-    margin-top: 20px;
-    display: none;
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    line-height: 1.5;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cek Tarif Tol Indonesia</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f6f7; margin: 0; padding: 20px; }
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); max-width: 600px; margin: auto; }
+    h2 { text-align: center; margin: 0 0 20px; }
+    select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; }
+    button { background: #0066ff; color: white; border: none; cursor: pointer; font-weight: bold; }
+    #output { margin-top: 20px; display: none; background: #fff; padding: 15px; border-radius: 10px; line-height: 1.5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .label { font-weight: 600; color: #333; }
+    .value { color: #111; }
+  </style>
 </head>
 <body>
-<div class="card">
-  <h2>Cek Tarif Tol</h2>
+  <div class="card">
+    <h2>Cek Tarif Tol</h2>
+    <select id="toltrans"><option value="">Pilih TOL TRANS</option></select>
+    <select id="ruas"><option value="">Pilih RUAS</option></select>
+    <select id="asal"><option value="">Pilih ASAL</option></select>
+    <select id="tujuan"><option value="">Pilih TUJUAN</option></select>
+    <button id="cekBtn">Cek Tarif</button>
+    <div id="output"></div>
+  </div>
 
-  <select id="toltrans"><option value="">Pilih Tol Trans</option></select>
-  <select id="ruas"><option value="">Pilih Ruas</option></select>
-  <select id="asal"><option value="">Pilih Asal</option></select>
-  <select id="tujuan"><option value="">Pilih Tujuan</option></select>
-
-  <button id="cekBtn">Cek Tarif</button>
-
-  <div id="output"></div>
-</div>
-<script src="tariftol.js"></script>
+  <script src="tariftol.js"></script>
 </body>
 </html>

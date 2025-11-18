@@ -1,8 +1,8 @@
 [
   {
     "trans": "Jabodetabek",
-    "ruas": "Jakarta–Bogor–Ciawi",
-    "panjang": 59,
+    "ruas": "Jakarta-Bogor-Ciawi",
+    "panjang": 59.00,
     "asal": "Jakarta",
     "tujuan": "Ciawi",
     "gol1": 7500,
@@ -15,7 +15,7 @@
   {
     "trans": "Jabodetabek",
     "ruas": "Prof.Dr.Ir.Soedijatmo",
-    "panjang": 14.3,
+    "panjang": 14.30,
     "asal": "Jakarta",
     "tujuan": "Pondok Pinang",
     "gol1": 8500,
@@ -24,6 +24,32 @@
     "sistem": "Terbuka",
     "atl": "",
     "perkm": ""
+  },
+  {
+    "trans": "Jabodetabek",
+    "ruas": "Cawang-Tomang-Pluit (CTC)",
+    "panjang": 23.55,
+    "asal": "Cawang",
+    "tujuan": "Pluit",
+    "gol1": 11000,
+    "gol23": 14000,
+    "gol45": 18000,
+    "sistem": "Terbuka",
+    "atl": "",
+    "perkm": ""
+  },
+  {
+    "trans": "Trans Jawa",
+    "ruas": "Semarang–Solo",
+    "panjang": 72.00,
+    "asal": "Semarang",
+    "tujuan": "Solo",
+    "gol1": 25000,
+    "gol23": 35000,
+    "gol45": 50000,
+    "sistem": "Tertutup",
+    "atl": "",
+    "perkm": ""
   }
-  // … semua baris lainnya …
+  // …tambahkan semua ruas lain dari sheet asli
 ]
