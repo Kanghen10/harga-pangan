@@ -3,126 +3,65 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tarif Tol Indonesia</title>
+<title>Cek Tarif Tol Indonesia</title>
 <style>
   body {
-    font-family: "Inter", sans-serif;
-    background: #f7f7f8;
-    margin: 0;
-    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f6fa;
+    margin: 0; padding: 20px;
   }
-  header {
-    background: #ffffff;
-    padding: 16px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 600;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .container {
-    padding: 16px;
-    max-width: 1100px;
+  .card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 600px;
     margin: auto;
   }
-  table {
+  h2 {
+    text-align: center;
+    margin-top: 0;
+  }
+  select, button {
     width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    border-radius: 12px;
-    overflow: hidden;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 15px;
   }
-  thead tr {
-    background: #ececec;
+  button {
+    background: #0066ff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
   }
-  th, td {
-    padding: 10px 12px;
-    font-size: 14px;
-    border-bottom: 1px solid #e5e5e5;
-  }
-  tbody tr:nth-child(even) {
-    background: #fafafa;
-  }
-  tbody tr:hover {
-    background: #f0f0f0;
-  }
-  th {
-    text-align: left;
-    font-weight: 600;
-  }
-  .small { font-size: 13px; color: #555; }
-
-  @media(max-width: 600px){
-    th, td{ font-size: 12px; padding: 8px; }
+  #output {
+    margin-top: 20px;
+    display: none;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
 </style>
 </head>
 <body>
-<header>Info Tarif Jalan Tol Indonesia</header>
-<div class="container">
-  <p class="small">Sumber data: Google Sheets publik. Kolom SK & Tanggal SK tidak ditampilkan sesuai permintaan.</p>
+<div class="card">
+  <h2>Cek Tarif Tol</h2>
 
-  <table id="tolTable">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Ruas Jalan Tol</th>
-        <th>Panjang (km)</th>
-        <th>Asal - Tujuan</th>
-        <th>Gol I</th>
-        <th>Gol II & III</th>
-        <th>Gol IV & V</th>
-        <th>Sistem</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Data diisi oleh JavaScript -->
-    </tbody>
-  </table>
+  <select id="toltrans"></select>
+  <select id="ruas"></select>
+  <select id="asal"></select>
+  <select id="tujuan"></select>
+
+  <button onclick="cekTarif()">Cek Tarif</button>
+
+  <div id="output"></div>
 </div>
 
-<script>
-const sourceUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuMTel_ab26ik6uA9qqg1qbU1OQ0AWsgorhjrgvLONrSNDTJaZC3v13b26Nm25Wg/pub?gid=560628054&single=true&output=csv";
-
-async function loadTolData(){
-  const res = await fetch(sourceUrl);
-  const csv = await res.text();
-  const rows = csv.split(/\r?\n/).map(r => r.split(","));
-
-  const tbody = document.querySelector("#tolTable tbody");
-  tbody.innerHTML = "";
-
-  for(let i=1; i<rows.length; i++){
-    const r = rows[i];
-    if(!r || r.length < 10) continue;
-
-    const no = r[0];
-    const ruas = r[1];
-    const panjang = r[2];
-    const asal = r[5];
-    const gol1 = r[6];
-    const gol23 = r[7];
-    const gol45 = r[8];
-    const sistem = r[9];
-
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${no}</td>
-      <td>${ruas}</td>
-      <td>${panjang}</td>
-      <td>${asal}</td>
-      <td>${gol1}</td>
-      <td>${gol23}</td>
-      <td>${gol45}</td>
-      <td>${sistem}</td>
-    `;
-    tbody.appendChild(tr);
-  }
-}
-
-loadTolData();
-</script>
+<script src="tariftol.js"></script>
 </body>
 </html>
