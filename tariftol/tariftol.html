@@ -1,102 +1,79 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cek Tarif Tol Indonesia — Final</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cek Tarif Tol Indonesia</title>
 
 <style>
-  :root{
-    --bg:#f6f7f9;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --accent:#0b72ff;
-    --row-even:#fbfcfd;
-    --row-hover:#f1f5f9;
-  }
-  html,body{height:100%}
-  body {
-    margin: 0;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: var(--bg);
-    -webkit-font-smoothing:antialiased;
-    padding: 18px;
-    color: #0f172a;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  margin: 0;
+  padding: 20px;
+}
 
-  header{text-align:center;margin-bottom:12px;}
-  header h1{margin:0;font-size:20px;font-weight:700;}
-  header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
 
-  .card{max-width:980px;margin:8px auto;background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 20px rgba(11,18,43,0.06);}
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-  @media(max-width:700px){ .grid{grid-template-columns:1fr} }
+select, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
 
-  label{display:block;font-weight:600;font-size:13px;color:#0f172a;margin-bottom:6px;}
-  select{width:100%;padding:12px;border-radius:10px;border:1px solid #e6e9ef;background:#fff;font-size:14px;appearance:none;}
+button {
+  background: #0066ff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-  .btn{display:block;width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:white;font-weight:700;font-size:15px;cursor:pointer;margin-top:10px;}
-  .btn:active{transform:translateY(1px)}
+button:hover {
+  background: #0053cc;
+}
 
-  .result{margin-top:16px;background:#fff;padding:14px;border-radius:12px;border-left:4px solid var(--accent);}
-  .row{display:flex;justify-content:space-between;gap:10px;padding:10px 6px;border-radius:8px;}
-  .row + .row{ margin-top:6px }
-  .row:nth-child(even){ background:var(--row-even) }
-  .row:hover{ background:var(--row-hover) }
-  .label{ color:var(--muted); font-size:13px; }
-  .value{ font-weight:700; color:#0b1220; font-size:14px; text-align:right; min-width:140px }
-  .muted{ color:var(--muted); font-size:13px; margin-top:8px }
-
-  /* debug panel */
-  #debug { margin-top:16px; background:#fff; padding:12px; border-radius:10px; font-family: monospace; font-size:12px; display:none; white-space:pre-wrap; max-height:320px; overflow:auto; border-left:4px solid #f59e0b;}
-
-  @media(max-width:420px){ .value{ font-size:13px; min-width:120px } }
+#output {
+  background: #eef3ff;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  display: none;
+}
 </style>
+
 </head>
 <body>
-<header>
-  <h1>Cek Tarif Tol Indonesia</h1>
-  <p>Data dari Google Sheets publik. Jika kamu punya <code>tariftol.json</code>, upload juga agar lebih cepat.</p>
-</header>
 
-<div class="card">
-  <div class="grid">
-    <div>
-      <label for="toltrans">TOL TRANS</label>
-      <select id="toltrans"><option value="">Memuat...</option></select>
-    </div>
+<div class="container">
+  <h2>Cek Tarif Tol Indonesia</h2>
 
-    <div>
-      <label for="ruas">RUAS</label>
-      <select id="ruas"><option value="">Memuat...</option></select>
-    </div>
+  <select id="toltrans"></select>
+  <select id="ruas"></select>
+  <select id="asal"></select>
+  <select id="tujuan"></select>
 
-    <div>
-      <label for="asal">ASAL</label>
-      <select id="asal"><option value="">Memuat...</option></select>
-    </div>
+  <button onclick="cekTarif()">Cek Tarif</button>
 
-    <div>
-      <label for="tujuan">TUJUAN</label>
-      <select id="tujuan"><option value="">Memuat...</option></select>
-    </div>
-  </div>
-
-  <button class="btn" id="cekBtn">Cek Tarif</button>
-
-  <div id="output" class="result" style="display:none"></div>
-
-  <div id="note" class="muted">Tip: pilih urut <b>TOL TRANS → RUAS → ASAL → TUJUAN</b>, lalu tekan <b>Cek Tarif</b>.</div>
-
-  <!-- debug info (tampil bila diperlukan) -->
-  <div id="debug"></div>
+  <div id="output"></div>
 </div>
 
 <script src="tariftol.js"></script>
+
 </body>
 </html>
