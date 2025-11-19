@@ -121,7 +121,8 @@ function cekTarif() {
   out.style.display = "block";
 
   // ==== HASIL TAMPILAN BARU ====
-  out.innerHTML = `
+
+out.innerHTML = `
     <div class="result-card" style="
       background:#ffffff;
       padding:20px;
@@ -140,14 +141,34 @@ function cekTarif() {
       <p><b>SK Tarif Terakhir:</b> ${d["SK Tarif Terakhir"] || "-"}</p>
       <p><b>Tanggal SK Terakhir:</b> ${d["Tanggal SK Terakhir"] || "-"}</p>
 
-      <p><b>Tarif Gol I:</b> Rp ${d.gol1}</p>
-      <p><b>Tarif Gol II–III:</b> Rp ${d.gol23}</p>
-      <p><b>Tarif Gol IV–V:</b> Rp ${d.gol45}</p>
+      <!-- CARD KHUSUS TARIF GOLONGAN -->
+      <div style="
+        background:#eef5ff;
+        border-left:6px solid #3b7ddd;
+        padding:16px;
+        border-radius:12px;
+        margin:16px 0;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      ">
+        <p style="margin:0 0 6px 0; font-size:18px; font-weight:600; color:#003e7f;">
+          Tarif Berdasarkan Golongan
+        </p>
+
+        <p style="font-size:17px; margin:4px 0;">
+          <b>Gol I:</b> <span style="color:#0a2c5f;">Rp ${d.gol1}</span>
+        </p>
+
+        <p style="font-size:17px; margin:4px 0;">
+          <b>Gol II–III:</b> <span style="color:#0a2c5f;">Rp ${d.gol23}</span>
+        </p>
+
+        <p style="font-size:17px; margin:4px 0;">
+          <b>Gol IV–V:</b> <span style="color:#0a2c5f;">Rp ${d.gol45}</span>
+        </p>
+      </div>
 
       <p><b>Sistem Transaksi:</b> ${d.sistem}</p>
-
       <p><b>Tarif per Km:</b> ${d.perkm || "-"}</p>
-
       <p><b>ATL:</b> ${d.atl || "-"}</p>
     </div>
 
@@ -184,10 +205,11 @@ function cekTarif() {
       <i>Contoh: Tol Dalam Kota Jakarta.</i><br><br>
 
       <b>Sistem Tertutup:</b><br>
-      Tarif berdasarkan jarak—tap-in & tap-out.<br>
+      Tarif berdasarkan jarak — tap-in & tap-out.<br>
       <i>Contoh: Tol Trans Jawa (Jakarta–Cikampek, Cipali).</i>
     </div>
   `;
+
 }
 
 loadTolData();
