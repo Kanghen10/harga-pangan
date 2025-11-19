@@ -12,7 +12,7 @@ async function loadTolData() {
 }
 
 function initDropdown() {
-  const trans = document.getElementById("toltrans");
+  const trans = document.getElementById("trans");
   const ruas = document.getElementById("ruas");
   const asal = document.getElementById("asal");
   const tujuan = document.getElementById("tujuan");
@@ -34,7 +34,7 @@ function initDropdown() {
     tujuan.innerHTML = `<option value="">Pilih Tujuan</option>`;
 
     const listRuas = tolData
-      .filter(d => d.trans === trans.value)
+      .filter(d => d.trans.toLowerCase() === trans.value.toLowerCase())
       .map(d => d.ruas);
 
     [...new Set(listRuas)].forEach(r =>
@@ -48,7 +48,7 @@ function initDropdown() {
     tujuan.innerHTML = `<option value="">Pilih Tujuan</option>`;
 
     const listAsal = tolData
-      .filter(d => d.ruas === ruas.value)
+      .filter(d => d.ruas.toLowerCase() === ruas.value.toLowerCase())
       .map(d => d.asal);
 
     [...new Set(listAsal)].forEach(a =>
@@ -61,7 +61,7 @@ function initDropdown() {
     tujuan.innerHTML = `<option value="">Pilih Tujuan</option>`;
 
     const listTujuan = tolData
-      .filter(d => d.asal === asal.value)
+      .filter(d => d.asal.toLowerCase() === asal.value.toLowerCase())
       .map(d => d.tujuan);
 
     [...new Set(listTujuan)].forEach(t =>
@@ -86,10 +86,10 @@ function cekTarif() {
   }
 
   const d = tolData.find(x =>
-    x.trans === trans &&
-    x.ruas === ruas &&
-    x.asal === asal &&
-    x.tujuan === tujuan
+    x.trans.toLowerCase() === trans.toLowerCase() &&
+    x.ruas.toLowerCase() === ruas.toLowerCase() &&
+    x.asal.toLowerCase() === asal.toLowerCase() &&
+    x.tujuan.toLowerCase() === tujuan.toLowerCase()
   );
 
   if (!d) {
@@ -99,33 +99,47 @@ function cekTarif() {
 
   out.style.display = "block";
   out.innerHTML = `
-    <h3>Hasil Tarif Tol</h3>
-    <p><b>Rute:</b> ${d.asal} → ${d.tujuan}</p>
-    <p><b>Ruas:</b> ${d.ruas}</p>
-    <p><b>Panjang:</b> ${d.panjang} km</p>
-    <p><b>Tarif Gol I:</b> Rp ${Number(d.gol1).toLocaleString()}</p>
-    <p><b>Tarif Gol II–III:</b> Rp ${Number(d.gol23).toLocaleString()}</p>
-    <p><b>Tarif Gol IV–V:</b> Rp ${Number(d.gol45).toLocaleString()}</p>
-    <p><b>Sistem Transaksi:</b> ${d.sistem}</p>
-    <p><b>ATL:</b> ${d.atl}</p>
+    <div class="result-card">
+      <h3>Hasil Tarif Tol</h3>
+
+      <p><b>Rute:</b> ${d.asal} → ${d.tujuan}</p>
+      <p><b>Ruas:</b> ${d.ruas}</p>
+      <p><b>Panjang:</b> ${d.panjang} km</p>
+
+      <p><b>SK Tarif Terakhir:</b> ${d["SK Tarif Terakhir"] || "-"}</p>
+      <p><b>Tanggal SK Terakhir:</b> ${d["Tanggal SK Terakhir"] || "-"}</p>
+
+      <p><b>Tarif Gol I:</b> Rp ${d.gol1}</p>
+      <p><b>Tarif Gol II–III:</b> Rp ${d.gol23}</p>
+      <p><b>Tarif Gol IV–V:</b> Rp ${d.gol45}</p>
+
+      <p><b>Sistem Transaksi:</b> ${d.sistem}</p>
+      <p><b>ATL:</b> ${d.atl}</p>
+    </div>
 
     <!-- Keterangan Golongan -->
-    <div style="
-      margin-top:18px;
-      padding:12px;
-      border-radius:10px;
-      background:#f4f6f8;
-      font-size:13px;
-      line-height:1.45;
-      color:#333;
-    ">
+    <div class="info-card">
       <b>Keterangan Golongan Kendaraan:</b><br>
       • <b>Golongan I</b> – Sedan, jip, pick-up/truk kecil, bus.<br>
       • <b>Golongan II</b> – Truk besar 2 gandar.<br>
       • <b>Golongan III</b> – Truk besar 3 gandar.<br>
       • <b>Golongan IV</b> – Truk besar 4 gandar.<br>
       • <b>Golongan V</b> – Truk besar 5 gandar.<br>
-      • <b>Golongan VI</b> – Kendaraan roda dua (hanya di beberapa ruas, contoh: Tol Bali Mandara).
+      • <b>Golongan VI</b> – Kendaraan roda dua (khusus beberapa ruas, contoh: Tol Bali Mandara).
+    </div>
+
+    <!-- Keterangan Sistem Tol -->
+    <div class="info-card">
+      <b>Sistem Tol Terbuka & Tertutup:</b><br><br>
+      <b>Sistem Terbuka:</b><br>
+      Pengguna membayar tarif tetap (merata) di pintu masuk/keluar tanpa memperhitungkan jarak.<br>
+      Transaksi hanya sekali (tap-in atau tap-out saja).<br>
+      <i>Contoh: beberapa ruas tol dalam kota Jakarta.</i><br><br>
+
+      <b>Sistem Tertutup:</b><br>
+      Tarif dihitung berdasarkan jarak dari gerbang masuk ke gerbang keluar.<br>
+      Pengguna wajib tap-in saat masuk dan tap-out saat keluar.<br>
+      <i>Contoh: Mayoritas Tol Trans Jawa (Jakarta–Cikampek, Cipali, dst).</i>
     </div>
   `;
 }
