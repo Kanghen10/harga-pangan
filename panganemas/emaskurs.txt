@@ -1,5 +1,5 @@
-USD 17.523
-"Harga Emas" = Rp2.637.451 /gr
+USD 17.520
+"Harga Emas" = Rp2.569.679 /gr
 ==============
 Kurs	Beli	Jual
 AUD	12687	12715
