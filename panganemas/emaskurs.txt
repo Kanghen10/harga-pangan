@@ -1,4 +1,4 @@
-USD 17.667
+USD 17.718
 "Harga Emas" = Rp2.592.590 /gr
 ==============
 Kurs	Beli	Jual
