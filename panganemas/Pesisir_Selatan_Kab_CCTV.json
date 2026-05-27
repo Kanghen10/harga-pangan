@@ -1,0 +1,75 @@
+[
+ 
+  {
+    "title":"Pantai Carocok Arah Panggung",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/1wbuTqepYN/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Batas Kota Pesisir Selatan - Padang 1",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/8poXDsVDvP/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Batas Kota Pesisir Selatan - Padang 2",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/ttygSs99dy/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Mesjid Terapung Carocok Painan",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/dXr6jrlx9s/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Taman Spora Painan 2",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/Vy91pQ56X7/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Taman Spora Painan 1",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/m7cQGqqNKo/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Pantai Carocok Painan 3",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/YAdOkhEh2E/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Pantai Carocok Painan 2",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/m7cQGqqNKo/s.m3u8"
+    ]
+  }, 
+ {
+    "title":"Pantai Carocok Painan 1",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://live.pesisirselatankab.go.id/abed2df127e1c0ac7e702104e748717b/hls/kominfo/YAdOkhEh2E/s.m3u8"
+    ]
+  }
+]
