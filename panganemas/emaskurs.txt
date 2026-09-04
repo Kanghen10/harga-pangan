@@ -1,5 +1,5 @@
-USD 17.759
-"Harga Emas" = Rp2.470.673 /gr
+USD 17.629
+"Harga Emas" = Rp2.533.945 /gr
 ==============
 Kurs	Beli	Jual
 AED	4795.65	4834.08
