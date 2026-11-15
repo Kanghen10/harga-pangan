@@ -138,9 +138,6 @@ out.innerHTML = `
       <p><b>Ruas:</b> ${d.ruas}</p>
       <p><b>Panjang:</b> ${d.panjang} km</p>
 
-      <p><b>SK Tarif Terakhir:</b> ${d["SK Tarif Terakhir"] || "-"}</p>
-      <p><b>Tanggal SK Terakhir:</b> ${d["Tanggal SK Terakhir"] || "-"}</p>
-
       <!-- CARD KHUSUS TARIF GOLONGAN -->
       <div style="
         background:#eef5ff;
@@ -166,10 +163,6 @@ out.innerHTML = `
           <b>Gol IV–V:</b> <span style="color:#0a2c5f;">Rp ${d.gol45}</span>
         </p>
       </div>
-
-      <p><b>Sistem Transaksi:</b> ${d.sistem}</p>
-      <p><b>Tarif per Km:</b> ${d.perkm || "-"}</p>
-      <p><b>ATL:</b> ${d.atl || "-"}</p>
     </div>
 
     <div class="info-card" style="
