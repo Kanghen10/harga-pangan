@@ -1,5 +1,12 @@
 let tolData = [];
 
+// ==== HELPER: format angka ribuan (id-ID) ====
+function formatRupiah(n) {
+  const num = Number(n);
+  if (isNaN(num)) return n;
+  return num.toLocaleString("id-ID");
+}
+
 // Load data
 async function loadTolData() {
   try {
@@ -152,15 +159,15 @@ out.innerHTML = `
         </p>
 
         <p style="font-size:17px; margin:4px 0;">
-          <b>Gol I:</b> <span style="color:#0a2c5f;">Rp ${d.gol1}</span>
+          <b>Gol I:</b> <span style="color:#0a2c5f;">Rp ${formatRupiah(d.gol1)}</span>
         </p>
 
         <p style="font-size:17px; margin:4px 0;">
-          <b>Gol II–III:</b> <span style="color:#0a2c5f;">Rp ${d.gol23}</span>
+          <b>Gol II–III:</b> <span style="color:#0a2c5f;">Rp ${formatRupiah(d.gol23)}</span>
         </p>
 
         <p style="font-size:17px; margin:4px 0;">
-          <b>Gol IV–V:</b> <span style="color:#0a2c5f;">Rp ${d.gol45}</span>
+          <b>Gol IV–V:</b> <span style="color:#0a2c5f;">Rp ${formatRupiah(d.gol45)}</span>
         </p>
       </div>
     </div>
