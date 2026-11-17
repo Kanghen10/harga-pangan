@@ -5,7 +5,7 @@
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/kRTdYHeHLZ/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/kRTdYHeHLZ/s.m3u8"
     ]
   },
  
@@ -14,7 +14,7 @@
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/vlWaaKJA8Y/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/vlWaaKJA8Y/s.m3u8"
     ]
   },
  
@@ -23,25 +23,17 @@
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/jkjOtg2aJB/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/jkjOtg2aJB/s.m3u8"
     ]
   },
  
- {
-    "title":"DESA SOREANG",
-    "provider":"webview",
-    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
-    "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/Z1yMOD012l/s.m3u8"
-    ]
-  },
- 
+
  {
     "title":"KOPO SAYATI",
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/Xv2ERL1yXY/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/Xv2ERL1yXY/s.m3u8"
     ]
   },
  
@@ -50,7 +42,7 @@
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/MLhHQFNqih/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/MLhHQFNqih/s.m3u8"
     ]
   },
  
@@ -59,24 +51,55 @@
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/s0BPNnOcMS/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/s0BPNnOcMS/s.m3u8"
     ]
   },
  {
-    "title":"MAJALAYA",
+   "title":"KATAPANG",
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/BdBowldl4p/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/08fP29L14l/s.m3u8"
     ]
   },
- 
  {
-    "title":"KATAPANG",
+    "title":"JEMBATAN TOL GBI",
     "provider":"webview",
     "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
     "arguments":[
-      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/85796bfd97b9856a500c7ec0e2e5b6cb/hls/dishub01/08fP29L14l/s.m3u8"
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/nDLIJn8RtI/s.m3u8"
+    ]
+  },
+  {
+    "title":"POM MINI ARAH UTARA",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/Ub72Zo7KZf/s.m3u8"
+    ]
+  },
+  {
+    "title":"JALAN LASWI KP.SENI GIRIHARJA ARAH UTARA",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/EwbL3FSTRI/s.m3u8"
+    ]
+  },
+  {
+    "title":"JALAN LASWI KP.SENI GIRIHARJA ARAH SELATAN",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/TfSf3jIO6T/s.m3u8"
+    ]
+  },
+  {
+    "title":"HARMONI BATUSARI ARAH SELATAN",
+    "provider":"webview",
+    "image":"http://cariloka.com/atcscctvindon/ic_atcscctvindon.png",
+    "arguments":[
+      "https://kanghen10.github.io/smart-video-player/#https://cctv.bandungkab.go.id/crIDWz6HaTfUfMzC6jvNoW4pHTcOB7/hls/dishub01/4SFQu911bk/s.m3u8"
     ]
   }
 ]
